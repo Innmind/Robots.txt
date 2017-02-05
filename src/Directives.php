@@ -24,6 +24,7 @@ final class Directives implements DirectivesInterface
     private $allow;
     private $disallow;
     private $crawlDelay;
+    private $string;
 
     public function __construct(
         UserAgentInterface $userAgent,
@@ -87,30 +88,25 @@ final class Directives implements DirectivesInterface
 
     public function __toString(): string
     {
-        $string = (string) $this->userAgent;
-        $string .= "\n";
-        $string = $this
-            ->allow
-            ->reduce(
-                $string,
-                function(string $carry, Allow $allow): string {
-                    return $carry.$allow."\n";
-                }
-            );
-        $string = $this
-            ->disallow
-            ->reduce(
-                $string,
-                function(string $carry, Disallow $disallow): string {
-                    return $carry.$disallow."\n";
-                }
-            );
-
-        if ($this->hasCrawlDelay()) {
-            $string .= $this->crawlDelay;
+        if ($this->string !== null) {
+            return $this->string;
         }
 
-        return $string;
+        $string = (string) $this->userAgent;
+
+        if ($this->allow->size() > 0) {
+            $string .= "\n".$this->allow->join("\n");
+        }
+
+        if ($this->disallow->size() > 0) {
+            $string .= "\n".$this->disallow->join("\n");
+        }
+
+        if ($this->hasCrawlDelay()) {
+            $string .= "\n".$this->crawlDelay;
+        }
+
+        return $this->string = $string;
     }
 
     private function allows(string $url): bool
