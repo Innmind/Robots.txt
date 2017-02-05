@@ -10,4 +10,5 @@ interface RobotsTxtInterface
     public function url(): UrlInterface;
     public function directives(): DirectivesInterface;
     public function disallows(string $userAgent, UrlInterface $url): bool;
+    public function __toString(): string;
 }
