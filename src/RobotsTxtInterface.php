@@ -9,6 +9,5 @@ interface RobotsTxtInterface
 {
     public function url(): UrlInterface;
     public function directives(): DirectivesInterface;
-    public function allows(string $userAgent, UrlInterface $url): bool;
     public function disallows(string $userAgent, UrlInterface $url): bool;
 }
