@@ -9,6 +9,7 @@ use Innmind\Immutable\Str;
 final class UserAgent implements UserAgentInterface
 {
     private $value;
+    private $string;
 
     public function __construct(string $value)
     {
@@ -16,6 +17,7 @@ final class UserAgent implements UserAgentInterface
             throw new InvalidArgumentException;
         }
 
+        $this->string = 'User-agent: '.$value;
         $this->value = (string) (new Str($value))->toLower();
     }
 
@@ -32,6 +34,6 @@ final class UserAgent implements UserAgentInterface
 
     public function __toString(): string
     {
-        return 'User-agent: '.$this->value;
+        return $this->string;
     }
 }

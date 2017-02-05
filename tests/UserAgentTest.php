@@ -40,8 +40,8 @@ class UserAgentTest extends \PHPUnit_Framework_TestCase
     public function testStringCast()
     {
         $this->assertSame(
-            'User-agent: *',
-            (string) new UserAgent('*')
+            'User-agent: GoogleBot',
+            (string) new UserAgent('GoogleBot')
         );
     }
 
