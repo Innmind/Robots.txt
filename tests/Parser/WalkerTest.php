@@ -20,15 +20,15 @@ class WalkerTest extends \PHPUnit_Framework_TestCase
 Sitemap : foo.xml
 Host : example.com
 Crawl-delay: 10
-User-agent : Foo
+User-agent : Foo # some comment here
 User-agent : Bar
-Allow : /foo
+Allow : /foo # and there
 Disallow : /bar
 
 User-agent : *
-Disallow :
+Disallow : #and me too
 Crawl-delay : 10
-Crawl-delay : 20
+Crawl-delay : 20 #
 TXT;
         $firstDirectives = <<<TXT
 User-agent: Foo
