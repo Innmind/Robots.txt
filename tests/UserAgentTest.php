@@ -29,11 +29,11 @@ class UserAgentTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider cases
      */
-    public function testMatch(string $pattern, string $userAgent, bool $expected)
+    public function testMatches(string $pattern, string $userAgent, bool $expected)
     {
         $this->assertSame(
             $expected,
-            (new UserAgent($pattern))->match($userAgent)
+            (new UserAgent($pattern))->matches($userAgent)
         );
     }
 

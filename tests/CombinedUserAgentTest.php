@@ -21,7 +21,7 @@ class CombinedUserAgentTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testMatchWithFirstUserAgent()
+    public function testMatchesWithFirstUserAgent()
     {
         $userAgent = new CombinedUserAgent(
             $first = $this->createMock(UserAgentInterface::class),
@@ -29,17 +29,17 @@ class CombinedUserAgentTest extends \PHPUnit_Framework_TestCase
         );
         $first
             ->expects($this->once())
-            ->method('match')
+            ->method('matches')
             ->with('foo')
             ->willReturn(true);
         $second
             ->expects($this->never())
-            ->method('match');
+            ->method('matches');
 
-        $this->assertTrue($userAgent->match('foo'));
+        $this->assertTrue($userAgent->matches('foo'));
     }
 
-    public function testMatchWithSecondUserAgent()
+    public function testMatchesWithSecondUserAgent()
     {
         $userAgent = new CombinedUserAgent(
             $first = $this->createMock(UserAgentInterface::class),
@@ -47,16 +47,16 @@ class CombinedUserAgentTest extends \PHPUnit_Framework_TestCase
         );
         $first
             ->expects($this->once())
-            ->method('match')
+            ->method('matches')
             ->with('foo')
             ->willReturn(false);
         $second
             ->expects($this->once())
-            ->method('match')
+            ->method('matches')
             ->with('foo')
             ->willReturn(true);
 
-        $this->assertTrue($userAgent->match('foo'));
+        $this->assertTrue($userAgent->matches('foo'));
     }
 
     public function testDoesnMatch()
@@ -67,16 +67,16 @@ class CombinedUserAgentTest extends \PHPUnit_Framework_TestCase
         );
         $first
             ->expects($this->once())
-            ->method('match')
+            ->method('matches')
             ->with('foo')
             ->willReturn(false);
         $second
             ->expects($this->once())
-            ->method('match')
+            ->method('matches')
             ->with('foo')
             ->willReturn(false);
 
-        $this->assertFalse($userAgent->match('foo'));
+        $this->assertFalse($userAgent->matches('foo'));
     }
 
     public function testStringCast()

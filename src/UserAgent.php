@@ -19,7 +19,7 @@ final class UserAgent implements UserAgentInterface
         $this->value = (string) (new Str($value))->toLower();
     }
 
-    public function match(string $userAgent): bool
+    public function matches(string $userAgent): bool
     {
         if ($this->value === '*') {
             return true;

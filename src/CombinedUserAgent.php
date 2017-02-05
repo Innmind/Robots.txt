@@ -16,9 +16,9 @@ final class CombinedUserAgent implements UserAgentInterface
         $this->second = $second;
     }
 
-    public function match(string $userAgent): bool
+    public function matches(string $userAgent): bool
     {
-        return $this->first->match($userAgent) || $this->second->match($userAgent);
+        return $this->first->matches($userAgent) || $this->second->matches($userAgent);
     }
 
     public function __toString(): string
