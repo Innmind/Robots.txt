@@ -4,8 +4,9 @@ declare(strict_types = 1);
 namespace Tests\Innmind\RobotsTxt;
 
 use Innmind\RobotsTxt\UrlPattern;
+use PHPUnit\Framework\TestCase;
 
-class UrlPatternTest extends \PHPUnit_Framework_TestCase
+class UrlPatternTest extends TestCase
 {
     public function testStringCast()
     {

@@ -17,8 +17,9 @@ use Innmind\Http\Message\{
     ResponseInterface
 };
 use Innmind\Filesystem\StreamInterface;
+use PHPUnit\Framework\TestCase;
 
-class ParserTest extends \PHPUnit_Framework_TestCase
+class ParserTest extends TestCase
 {
     public function testInterface()
     {
