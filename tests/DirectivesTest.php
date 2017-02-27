@@ -15,8 +15,9 @@ use Innmind\RobotsTxt\{
 };
 use Innmind\Url\Url;
 use Innmind\Immutable\Set;
+use PHPUnit\Framework\TestCase;
 
-class DirectivesTest extends \PHPUnit_Framework_TestCase
+class DirectivesTest extends TestCase
 {
     public function testInterface()
     {

@@ -11,8 +11,9 @@ use Innmind\Immutable\{
     Str,
     StreamInterface
 };
+use PHPUnit\Framework\TestCase;
 
-class WalkerTest extends \PHPUnit_Framework_TestCase
+class WalkerTest extends TestCase
 {
     public function testExecution()
     {

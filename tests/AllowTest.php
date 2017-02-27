@@ -7,8 +7,9 @@ use Innmind\RobotsTxt\{
     Allow,
     UrlPattern
 };
+use PHPUnit\Framework\TestCase;
 
-class AllowTest extends \PHPUnit_Framework_TestCase
+class AllowTest extends TestCase
 {
     public function testMatches()
     {

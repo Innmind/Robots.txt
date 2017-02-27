@@ -10,8 +10,9 @@ use Innmind\RobotsTxt\{
 };
 use Innmind\Url\UrlInterface;
 use Innmind\Immutable\Stream;
+use PHPUnit\Framework\TestCase;
 
-class RobotsTxtTest extends \PHPUnit_Framework_TestCase
+class RobotsTxtTest extends TestCase
 {
     public function testInterface()
     {

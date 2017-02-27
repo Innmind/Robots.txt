@@ -7,8 +7,9 @@ use Innmind\RobotsTxt\{
     CombinedUserAgent,
     UserAgentInterface
 };
+use PHPUnit\Framework\TestCase;
 
-class CombinedUserAgentTest extends \PHPUnit_Framework_TestCase
+class CombinedUserAgentTest extends TestCase
 {
     public function testInterface()
     {
