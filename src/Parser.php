@@ -7,24 +7,21 @@ use Innmind\RobotsTxt\{
     Parser\Walker,
     Exception\FileNotFoundException
 };
-use Innmind\HttpTransport\TransportInterface;
+use Innmind\HttpTransport\Transport;
 use Innmind\Url\UrlInterface;
 use Innmind\Http\{
-    Message\Request,
-    Message\Method,
-    Message\StatusCode,
-    ProtocolVersion,
-    Headers,
-    Header\HeaderInterface,
-    Header\HeaderValueInterface,
-    Header\Header,
-    Header\HeaderValue
+    Message\Request\Request,
+    Message\Method\Method,
+    Message\StatusCode\StatusCode,
+    ProtocolVersion\ProtocolVersion,
+    Headers\Headers,
+    Header,
+    Header\Value\Value
 };
 use Innmind\Filesystem\Stream\NullStream;
 use Innmind\Immutable\{
     Map,
-    Str,
-    Set
+    Str
 };
 
 final class Parser implements ParserInterface
@@ -34,7 +31,7 @@ final class Parser implements ParserInterface
     private $userAgent;
 
     public function __construct(
-        TransportInterface $transport,
+        Transport $transport,
         Walker $walker,
         string $userAgent
     ) {
@@ -54,13 +51,12 @@ final class Parser implements ParserInterface
                 new Method(Method::GET),
                 new ProtocolVersion(2, 0),
                 new Headers(
-                    (new Map('string', HeaderInterface::class))
+                    (new Map('string', Header::class))
                         ->put(
                             'User-Agent',
-                            new Header(
+                            new Header\Header(
                                 'User-Agent',
-                                (new Set(HeaderValueInterface::class))
-                                    ->add(new HeaderValue($this->userAgent))
+                                new Value($this->userAgent)
                             )
                         )
                 ),
