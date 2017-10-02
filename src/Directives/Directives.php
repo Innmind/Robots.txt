@@ -8,8 +8,7 @@ use Innmind\RobotsTxt\{
     Allow,
     Disallow,
     UserAgent,
-    CrawlDelay,
-    Exception\InvalidArgumentException
+    CrawlDelay
 };
 use Innmind\Url\{
     UrlInterface,
@@ -39,11 +38,18 @@ final class Directives implements DirectivesInterface
         SetInterface $disallow,
         CrawlDelay $crawlDelay = null
     ) {
-        if (
-            (string) $allow->type() !== Allow::class ||
-            (string) $disallow->type() !== Disallow::class
-        ) {
-            throw new InvalidArgumentException;
+        if ((string) $allow->type() !== Allow::class) {
+            throw new \TypeError(sprintf(
+                'Argument 2 must be of type SetInterface<%s>',
+                Allow::class
+            ));
+        }
+
+        if ((string) $disallow->type() !== Disallow::class) {
+            throw new \TypeError(sprintf(
+                'Argument 3 must be of type SetInterface<%s>',
+                Disallow::class
+            ));
         }
 
         $this->userAgent = $userAgent;

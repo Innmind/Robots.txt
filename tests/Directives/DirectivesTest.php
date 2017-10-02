@@ -102,7 +102,8 @@ class DirectivesTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\RobotsTxt\Exception\InvalidArgumentException
+     * @expectedException TypeError
+     * @expectedExceptionMessage Argument 2 must be of type SetInterface<Innmind\RobotsTxt\Allow>
      */
     public function testThrowWhenInvalidAllowSet()
     {
@@ -114,7 +115,8 @@ class DirectivesTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\RobotsTxt\Exception\InvalidArgumentException
+     * @expectedException TypeError
+     * @expectedExceptionMessage Argument 3 must be of type SetInterface<Innmind\RobotsTxt\Disallow>
      */
     public function testThrowWhenInvalidDisallowSet()
     {

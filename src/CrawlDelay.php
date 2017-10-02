@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\RobotsTxt;
 
-use Innmind\RobotsTxt\Exception\InvalidArgumentException;
+use Innmind\RobotsTxt\Exception\DomainException;
 
 final class CrawlDelay
 {
@@ -12,7 +12,7 @@ final class CrawlDelay
     public function __construct(int $value)
     {
         if ($value < 0) {
-            throw new InvalidArgumentException;
+            throw new DomainException;
         }
 
         $this->value = $value;

@@ -20,7 +20,10 @@ final class RobotsTxt implements RobotsTxtInterface
         StreamInterface $directives
     ) {
         if ((string) $directives->type() !== Directives::class) {
-            throw new InvalidArgumentException;
+            throw new \TypeError(sprintf(
+                'Argument 2 must be of type StreamInterface<%s>',
+                Directives::class
+            ));
         }
 
         $this->url = $url;

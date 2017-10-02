@@ -20,7 +20,7 @@ class UserAgentTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\RobotsTxt\Exception\InvalidArgumentException
+     * @expectedException Innmind\RobotsTxt\Exception\DomainException
      */
     public function testThrowWhenEmptyUserAgent()
     {

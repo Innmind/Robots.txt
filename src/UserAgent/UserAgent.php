@@ -5,7 +5,7 @@ namespace Innmind\RobotsTxt\UserAgent;
 
 use Innmind\RobotsTxt\{
     UserAgent as UserAgentInterface,
-    Exception\InvalidArgumentException
+    Exception\DomainException
 };
 use Innmind\Immutable\Str;
 
@@ -17,7 +17,7 @@ final class UserAgent implements UserAgentInterface
     public function __construct(string $value)
     {
         if (empty($value)) {
-            throw new InvalidArgumentException;
+            throw new DomainException;
         }
 
         $this->string = 'User-agent: '.$value;
