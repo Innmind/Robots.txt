@@ -1,12 +1,12 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\RobotsTxt;
+namespace Tests\Innmind\RobotsTxt\RobotsTxt;
 
 use Innmind\RobotsTxt\{
-    RobotsTxt,
-    RobotsTxtInterface,
-    DirectivesInterface
+    RobotsTxt\RobotsTxt,
+    RobotsTxt as RobotsTxtInterface,
+    Directives
 };
 use Innmind\Url\UrlInterface;
 use Innmind\Immutable\Stream;
@@ -20,7 +20,7 @@ class RobotsTxtTest extends TestCase
             RobotsTxtInterface::class,
             new RobotsTxt(
                 $this->createMock(UrlInterface::class),
-                new Stream(DirectivesInterface::class)
+                new Stream(Directives::class)
             )
         );
     }
@@ -29,7 +29,7 @@ class RobotsTxtTest extends TestCase
     {
         $robots = new RobotsTxt(
             $url = $this->createMock(UrlInterface::class),
-            new Stream(DirectivesInterface::class)
+            new Stream(Directives::class)
         );
 
         $this->assertSame($url, $robots->url());
@@ -39,7 +39,7 @@ class RobotsTxtTest extends TestCase
     {
         $robots = new RobotsTxt(
             $this->createMock(UrlInterface::class),
-            $directives = new Stream(DirectivesInterface::class)
+            $directives = new Stream(Directives::class)
         );
 
         $this->assertSame($directives, $robots->directives());
@@ -49,9 +49,9 @@ class RobotsTxtTest extends TestCase
     {
         $robots = new RobotsTxt(
             $this->createMock(UrlInterface::class),
-            (new Stream(DirectivesInterface::class))
+            (new Stream(Directives::class))
                 ->add(
-                    $mock = $this->createMock(DirectivesInterface::class)
+                    $mock = $this->createMock(Directives::class)
                 )
         );
         $url = $this->createMock(UrlInterface::class);
@@ -90,12 +90,12 @@ class RobotsTxtTest extends TestCase
     {
         $robots = new RobotsTxt(
             $this->createMock(UrlInterface::class),
-            (new Stream(DirectivesInterface::class))
+            (new Stream(Directives::class))
                 ->add(
-                    $mock1 = $this->createMock(DirectivesInterface::class)
+                    $mock1 = $this->createMock(Directives::class)
                 )
                 ->add(
-                    $mock2 = $this->createMock(DirectivesInterface::class)
+                    $mock2 = $this->createMock(Directives::class)
                 )
         );
         $url = $this->createMock(UrlInterface::class);
@@ -127,12 +127,12 @@ class RobotsTxtTest extends TestCase
     {
         $robots = new RobotsTxt(
             $this->createMock(UrlInterface::class),
-            (new Stream(DirectivesInterface::class))
+            (new Stream(Directives::class))
                 ->add(
-                    $mock1 = $this->createMock(DirectivesInterface::class)
+                    $mock1 = $this->createMock(Directives::class)
                 )
                 ->add(
-                    $mock2 = $this->createMock(DirectivesInterface::class)
+                    $mock2 = $this->createMock(Directives::class)
                 )
         );
         $mock1

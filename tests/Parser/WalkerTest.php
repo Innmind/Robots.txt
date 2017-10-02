@@ -5,7 +5,7 @@ namespace Tests\Innmind\RobotsTxt\Parser;
 
 use Innmind\RobotsTxt\{
     Parser\Walker,
-    DirectivesInterface
+    Directives
 };
 use Innmind\Immutable\{
     Str,
@@ -44,7 +44,7 @@ TXT;
         $stream = (new Walker)(new Str($robots));
 
         $this->assertInstanceOf(StreamInterface::class, $stream);
-        $this->assertSame(DirectivesInterface::class, (string) $stream->type());
+        $this->assertSame(Directives::class, (string) $stream->type());
         $this->assertCount(2, $stream);
         $this->assertSame(
             $firstDirectives,

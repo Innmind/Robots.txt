@@ -1,7 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\RobotsTxt;
+namespace Innmind\RobotsTxt\UserAgent;
+
+use Innmind\RobotsTxt\UserAgent as UserAgentInterface;
 
 final class CombinedUserAgent implements UserAgentInterface
 {

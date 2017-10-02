@@ -1,13 +1,13 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\RobotsTxt;
+namespace Tests\Innmind\RobotsTxt\Parser;
 
 use Innmind\RobotsTxt\{
-    Parser,
-    ParserInterface,
+    Parser\Parser,
+    Parser as ParserInterface,
     Parser\Walker,
-    RobotsTxtInterface
+    RobotsTxt
 };
 use Innmind\HttpTransport\Transport;
 use Innmind\Url\UrlInterface;
@@ -95,7 +95,7 @@ TXT
 
         $robots = $parse($url);
 
-        $this->assertInstanceOf(RobotsTxtInterface::class, $robots);
+        $this->assertInstanceOf(RobotsTxt::class, $robots);
         $this->assertSame($url, $robots->url());
         $this->assertSame($expected, (string) $robots);
     }
