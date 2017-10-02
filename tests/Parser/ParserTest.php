@@ -1,22 +1,22 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\RobotsTxt;
+namespace Tests\Innmind\RobotsTxt\Parser;
 
 use Innmind\RobotsTxt\{
-    Parser,
-    ParserInterface,
+    Parser\Parser,
+    Parser as ParserInterface,
     Parser\Walker,
-    RobotsTxtInterface
+    RobotsTxt
 };
-use Innmind\HttpTransport\TransportInterface;
+use Innmind\HttpTransport\Transport;
 use Innmind\Url\UrlInterface;
 use Innmind\Http\Message\{
-    Request,
-    StatusCode,
-    ResponseInterface
+    Request\Request,
+    StatusCode\StatusCode,
+    Response
 };
-use Innmind\Filesystem\StreamInterface;
+use Innmind\Stream\Readable;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
@@ -26,7 +26,7 @@ class ParserTest extends TestCase
         $this->assertInstanceOf(
             ParserInterface::class,
             new Parser(
-                $this->createMock(TransportInterface::class),
+                $this->createMock(Transport::class),
                 new Walker,
                 'foo'
             )
@@ -36,7 +36,7 @@ class ParserTest extends TestCase
     public function testExecution()
     {
         $parse = new Parser(
-            $transport = $this->createMock(TransportInterface::class),
+            $transport = $this->createMock(Transport::class),
             new Walker,
             'InnmindCrawler'
         );
@@ -54,7 +54,7 @@ class ParserTest extends TestCase
                     (string) $request->body() === '';
             }))
             ->willReturn(
-                $response = $this->createMock(ResponseInterface::class)
+                $response = $this->createMock(Response::class)
             );
         $response
             ->expects($this->once())
@@ -64,7 +64,7 @@ class ParserTest extends TestCase
             ->expects($this->once())
             ->method('body')
             ->willReturn(
-                $stream = $this->createMock(StreamInterface::class)
+                $stream = $this->createMock(Readable::class)
             );
         $stream
             ->expects($this->once())
@@ -95,18 +95,18 @@ TXT
 
         $robots = $parse($url);
 
-        $this->assertInstanceOf(RobotsTxtInterface::class, $robots);
+        $this->assertInstanceOf(RobotsTxt::class, $robots);
         $this->assertSame($url, $robots->url());
         $this->assertSame($expected, (string) $robots);
     }
 
     /**
-     * @expectedException Innmind\RobotsTxt\Exception\FileNotFoundException
+     * @expectedException Innmind\RobotsTxt\Exception\FileNotFound
      */
     public function testThrowWhenRequestNotFulfilled()
     {
         $parse = new Parser(
-            $transport = $this->createMock(TransportInterface::class),
+            $transport = $this->createMock(Transport::class),
             new Walker,
             'InnmindCrawler'
         );
@@ -115,7 +115,7 @@ TXT
             ->expects($this->once())
             ->method('fulfill')
             ->willReturn(
-                $response = $this->createMock(ResponseInterface::class)
+                $response = $this->createMock(Response::class)
             );
         $response
             ->expects($this->once())

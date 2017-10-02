@@ -5,14 +5,11 @@ namespace Innmind\RobotsTxt\Parser;
 
 use Innmind\RobotsTxt\{
     UserAgent,
-    UserAgentInterface,
-    CombinedUserAgent,
     Allow,
     Disallow,
     UrlPattern,
     CrawlDelay,
-    Directives,
-    DirectivesInterface
+    Directives
 };
 use Innmind\Immutable\{
     Str,
@@ -37,7 +34,7 @@ final class Walker
     }
 
     /**
-     * @return StreamInterface<DirectivesInterface>
+     * @return StreamInterface<Directives>
      */
     public function __invoke(Str $robots): StreamInterface
     {
@@ -89,10 +86,10 @@ final class Walker
                 }
             )
             ->reduce(
-                new Stream(DirectivesInterface::class),
+                new Stream(Directives::class),
                 function(Stream $carry, Map $map): Stream {
                     return $carry->add(
-                        new Directives(
+                        new Directives\Directives(
                             $map->get('user-agent'),
                             $map->get('allow'),
                             $map->get('disallow'),
@@ -112,7 +109,7 @@ final class Walker
         switch ((string) $line->key()) {
             case 'user-agent':
                 return $carry->add(
-                    new UserAgent((string) $line->value())
+                    new UserAgent\UserAgent((string) $line->value())
                 );
 
             case 'allow':
@@ -150,8 +147,8 @@ final class Walker
         $last = $carry->last();
 
         if (
-            !$last instanceof UserAgentInterface ||
-            !$object instanceof UserAgentInterface
+            !$last instanceof UserAgent ||
+            !$object instanceof UserAgent
         ) {
             return $carry->add($object);
         }
@@ -159,7 +156,7 @@ final class Walker
         return $carry
             ->dropEnd(1)
             ->add(
-                new CombinedUserAgent(
+                new UserAgent\CombinedUserAgent(
                     $last,
                     $object
                 )
@@ -173,7 +170,7 @@ final class Walker
      * @return Stream<Map<string, string>>
      */
     private function groupDirectives(Stream $carry, $object): Stream {
-        if ($object instanceof UserAgentInterface) {
+        if ($object instanceof UserAgent) {
             return $carry->add(
                 (new Map('string', 'object'))
                     ->put('user-agent', $object)

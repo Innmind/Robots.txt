@@ -1,11 +1,11 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\RobotsTxt;
+namespace Tests\Innmind\RobotsTxt\UserAgent;
 
 use Innmind\RobotsTxt\{
-    UserAgent,
-    UserAgentInterface
+    UserAgent\UserAgent,
+    UserAgent as UserAgentInterface
 };
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +20,7 @@ class UserAgentTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\RobotsTxt\Exception\InvalidArgumentException
+     * @expectedException Innmind\RobotsTxt\Exception\DomainException
      */
     public function testThrowWhenEmptyUserAgent()
     {

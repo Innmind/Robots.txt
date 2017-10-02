@@ -1,17 +1,16 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\RobotsTxt;
+namespace Tests\Innmind\RobotsTxt\Directives;
 
 use Innmind\RobotsTxt\{
-    Directives,
-    DirectivesInterface,
-    UserAgentInterface,
+    Directives\Directives,
+    Directives as DirectivesInterface,
+    UserAgent,
     Allow,
     Disallow,
     CrawlDelay,
-    UrlPattern,
-    UserAgent
+    UrlPattern
 };
 use Innmind\Url\Url;
 use Innmind\Immutable\Set;
@@ -24,7 +23,7 @@ class DirectivesTest extends TestCase
         $this->assertInstanceOf(
             DirectivesInterface::class,
             new Directives(
-                $this->createMock(UserAgentInterface::class),
+                $this->createMock(UserAgent::class),
                 new Set(Allow::class),
                 new Set(Disallow::class)
             )
@@ -34,7 +33,7 @@ class DirectivesTest extends TestCase
     public function testTargets()
     {
         $directives = new Directives(
-            $userAgent = $this->createMock(UserAgentInterface::class),
+            $userAgent = $this->createMock(UserAgent::class),
             new Set(Allow::class),
             new Set(Disallow::class)
         );
@@ -56,14 +55,14 @@ class DirectivesTest extends TestCase
     public function testHasCrawlDelay()
     {
         $directives = new Directives(
-            $this->createMock(UserAgentInterface::class),
+            $this->createMock(UserAgent::class),
             new Set(Allow::class),
             new Set(Disallow::class)
         );
         $this->assertFalse($directives->hasCrawlDelay());
 
         $directives = new Directives(
-            $this->createMock(UserAgentInterface::class),
+            $this->createMock(UserAgent::class),
             new Set(Allow::class),
             new Set(Disallow::class),
             new CrawlDelay(0)
@@ -74,7 +73,7 @@ class DirectivesTest extends TestCase
     public function testCrawlDelay()
     {
         $directives = new Directives(
-            $userAgent = $this->createMock(UserAgentInterface::class),
+            $userAgent = $this->createMock(UserAgent::class),
             new Set(Allow::class),
             new Set(Disallow::class),
             $delay = new CrawlDelay(0)
@@ -89,7 +88,7 @@ class DirectivesTest extends TestCase
     public function testDisallows(bool $expected, string $url, string $allow, string $disallow)
     {
         $directives = new Directives(
-            $this->createMock(UserAgentInterface::class),
+            $this->createMock(UserAgent::class),
             (new Set(Allow::class))
                 ->add(new Allow(new UrlPattern($allow))),
             (new Set(Disallow::class))
@@ -103,24 +102,26 @@ class DirectivesTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\RobotsTxt\Exception\InvalidArgumentException
+     * @expectedException TypeError
+     * @expectedExceptionMessage Argument 2 must be of type SetInterface<Innmind\RobotsTxt\Allow>
      */
     public function testThrowWhenInvalidAllowSet()
     {
         new Directives(
-            $this->createMock(UserAgentInterface::class),
+            $this->createMock(UserAgent::class),
             new Set(UrlPattern::class),
             new Set(Disallow::class)
         );
     }
 
     /**
-     * @expectedException Innmind\RobotsTxt\Exception\InvalidArgumentException
+     * @expectedException TypeError
+     * @expectedExceptionMessage Argument 3 must be of type SetInterface<Innmind\RobotsTxt\Disallow>
      */
     public function testThrowWhenInvalidDisallowSet()
     {
         new Directives(
-            $this->createMock(UserAgentInterface::class),
+            $this->createMock(UserAgent::class),
             new Set(Allow::class),
             new Set(UrlPattern::class)
         );
@@ -138,7 +139,7 @@ class DirectivesTest extends TestCase
         $this->assertSame(
             $expected,
             (string) new Directives(
-                new UserAgent('*'),
+                new UserAgent\UserAgent('*'),
                 (new Set(Allow::class))
                     ->add(new Allow(new UrlPattern('/foo')))
                     ->add(new Allow(new UrlPattern('/bar'))),

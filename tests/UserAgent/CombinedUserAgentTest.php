@@ -1,11 +1,11 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\RobotsTxt;
+namespace Tests\Innmind\RobotsTxt\UserAgent;
 
 use Innmind\RobotsTxt\{
-    CombinedUserAgent,
-    UserAgentInterface
+    UserAgent\CombinedUserAgent,
+    UserAgent
 };
 use PHPUnit\Framework\TestCase;
 
@@ -14,10 +14,10 @@ class CombinedUserAgentTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            UserAgentInterface::class,
+            UserAgent::class,
             new CombinedUserAgent(
-                $this->createMock(UserAgentInterface::class),
-                $this->createMock(UserAgentInterface::class)
+                $this->createMock(UserAgent::class),
+                $this->createMock(UserAgent::class)
             )
         );
     }
@@ -25,8 +25,8 @@ class CombinedUserAgentTest extends TestCase
     public function testMatchesWithFirstUserAgent()
     {
         $userAgent = new CombinedUserAgent(
-            $first = $this->createMock(UserAgentInterface::class),
-            $second = $this->createMock(UserAgentInterface::class)
+            $first = $this->createMock(UserAgent::class),
+            $second = $this->createMock(UserAgent::class)
         );
         $first
             ->expects($this->once())
@@ -43,8 +43,8 @@ class CombinedUserAgentTest extends TestCase
     public function testMatchesWithSecondUserAgent()
     {
         $userAgent = new CombinedUserAgent(
-            $first = $this->createMock(UserAgentInterface::class),
-            $second = $this->createMock(UserAgentInterface::class)
+            $first = $this->createMock(UserAgent::class),
+            $second = $this->createMock(UserAgent::class)
         );
         $first
             ->expects($this->once())
@@ -63,8 +63,8 @@ class CombinedUserAgentTest extends TestCase
     public function testDoesnMatch()
     {
         $userAgent = new CombinedUserAgent(
-            $first = $this->createMock(UserAgentInterface::class),
-            $second = $this->createMock(UserAgentInterface::class)
+            $first = $this->createMock(UserAgent::class),
+            $second = $this->createMock(UserAgent::class)
         );
         $first
             ->expects($this->once())
@@ -83,8 +83,8 @@ class CombinedUserAgentTest extends TestCase
     public function testStringCast()
     {
         $userAgent = new CombinedUserAgent(
-            $first = $this->createMock(UserAgentInterface::class),
-            $second = $this->createMock(UserAgentInterface::class)
+            $first = $this->createMock(UserAgent::class),
+            $second = $this->createMock(UserAgent::class)
         );
         $first
             ->expects($this->once())
