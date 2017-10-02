@@ -101,7 +101,7 @@ TXT
     }
 
     /**
-     * @expectedException Innmind\RobotsTxt\Exception\FileNotFoundException
+     * @expectedException Innmind\RobotsTxt\Exception\FileNotFound
      */
     public function testThrowWhenRequestNotFulfilled()
     {

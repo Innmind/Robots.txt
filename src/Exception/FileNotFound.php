@@ -3,6 +3,6 @@ declare(strict_types = 1);
 
 namespace Innmind\RobotsTxt\Exception;
 
-class FileNotFoundException extends RuntimeException
+class FileNotFound extends RuntimeException
 {
 }

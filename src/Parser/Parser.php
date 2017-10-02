@@ -6,7 +6,7 @@ namespace Innmind\RobotsTxt\Parser;
 use Innmind\RobotsTxt\{
     Parser as ParserInterface,
     RobotsTxt,
-    Exception\FileNotFoundException
+    Exception\FileNotFound
 };
 use Innmind\HttpTransport\Transport;
 use Innmind\Url\UrlInterface;
@@ -66,7 +66,7 @@ final class Parser implements ParserInterface
         );
 
         if ($response->statusCode()->value() !== StatusCode::codes()->get('OK')) {
-            throw new FileNotFoundException;
+            throw new FileNotFound;
         }
 
         $directives = ($this->walker)(new Str((string) $response->body()));
