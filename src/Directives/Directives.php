@@ -128,7 +128,7 @@ final class Directives implements DirectivesInterface
             ->allow
             ->reduce(
                 false,
-                function(string $carry, Allow $allow) use ($url): bool {
+                function(bool $carry, Allow $allow) use ($url): bool {
                     if ($carry === true) {
                         return $carry;
                     }
