@@ -3,7 +3,7 @@ php:
     - 7.2
     - 7.3
     - nightly
-before_script: composer install --prefer-source
+before_script: composer install
 script: vendor/bin/phpunit --coverage-clover=coverage.clover
 after_script:
     - if [ "$TRAVIS_PHP_VERSION" = "7.1" ]; then wget https://scrutinizer-ci.com/ocular.phar; fi
