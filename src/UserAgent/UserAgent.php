@@ -21,7 +21,7 @@ final class UserAgent implements UserAgentInterface
         }
 
         $this->string = 'User-agent: '.$value;
-        $this->value = (string) (new Str($value))->toLower();
+        $this->value = (string) Str::of($value)->toLower();
     }
 
     public function matches(string $userAgent): bool
@@ -30,7 +30,7 @@ final class UserAgent implements UserAgentInterface
             return true;
         }
 
-        return (new Str($userAgent))
+        return Str::of($userAgent)
             ->toLower()
             ->contains($this->value);
     }

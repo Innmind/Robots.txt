@@ -26,11 +26,13 @@ final class Walker
 
     public function __construct()
     {
-        $this->supportedKeys = (new Set('string'))
-            ->add('user-agent')
-            ->add('allow')
-            ->add('disallow')
-            ->add('crawl-delay');
+        $this->supportedKeys = Set::of(
+            'string',
+            'user-agent',
+            'allow',
+            'disallow',
+            'crawl-delay'
+        );
     }
 
     /**
@@ -40,20 +42,20 @@ final class Walker
     {
         return $robots
             ->split("\n")
-            ->map(function(Str $line): Str {
+            ->map(static function(Str $line): Str {
                 return $line
                     ->pregReplace('/ #.*/', '')
                     ->trim();
             })
-            ->filter(function(Str $line): bool {
+            ->filter(static function(Str $line): bool {
                 return $line->length() > 0;
             })
-            ->filter(function(Str $line): bool {
+            ->filter(static function(Str $line): bool {
                 return $line->split(':')->size() >= 2;
             })
             ->reduce(
                 new Stream(Pair::class),
-                function(Stream $carry, Str $line): Stream {
+                static function(Stream $carry, Str $line): Stream {
                     $parts = $line->split(':');
 
                     return $carry->add(
@@ -87,7 +89,7 @@ final class Walker
             )
             ->reduce(
                 new Stream(Directives::class),
-                function(Stream $carry, Map $map): Stream {
+                static function(Stream $carry, Map $map): Stream {
                     return $carry->add(
                         new Directives\Directives(
                             $map->get('user-agent'),
@@ -172,10 +174,10 @@ final class Walker
     private function groupDirectives(Stream $carry, $object): Stream {
         if ($object instanceof UserAgent) {
             return $carry->add(
-                (new Map('string', 'object'))
-                    ->put('user-agent', $object)
-                    ->put('allow', new Set(Allow::class))
-                    ->put('disallow', new Set(Disallow::class))
+                Map::of('string', 'object')
+                    ('user-agent', $object)
+                    ('allow', new Set(Allow::class))
+                    ('disallow', new Set(Disallow::class))
             );
         }
 

@@ -89,10 +89,8 @@ class DirectivesTest extends TestCase
     {
         $directives = new Directives(
             $this->createMock(UserAgent::class),
-            (new Set(Allow::class))
-                ->add(new Allow(new UrlPattern($allow))),
-            (new Set(Disallow::class))
-                ->add(new Disallow(new UrlPattern($disallow)))
+            Set::of(Allow::class, new Allow(new UrlPattern($allow))),
+            Set::of(Disallow::class, new Disallow(new UrlPattern($disallow)))
         );
 
         $this->assertSame(
@@ -140,12 +138,16 @@ class DirectivesTest extends TestCase
             $expected,
             (string) new Directives(
                 new UserAgent\UserAgent('*'),
-                (new Set(Allow::class))
-                    ->add(new Allow(new UrlPattern('/foo')))
-                    ->add(new Allow(new UrlPattern('/bar'))),
-                (new Set(Disallow::class))
-                    ->add(new Disallow(new UrlPattern('/baz')))
-                    ->add(new Disallow(new UrlPattern('/'))),
+                Set::of(
+                    Allow::class,
+                    new Allow(new UrlPattern('/foo')),
+                    new Allow(new UrlPattern('/bar'))
+                ),
+                Set::of(
+                    Disallow::class,
+                    new Disallow(new UrlPattern('/baz')),
+                    new Disallow(new UrlPattern('/'))
+                ),
                 new CrawlDelay(10)
             )
         );

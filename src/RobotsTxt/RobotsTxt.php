@@ -44,7 +44,7 @@ final class RobotsTxt implements RobotsTxtInterface
     {
         $directives = $this
             ->directives
-            ->filter(function(Directives $directives) use ($userAgent): bool {
+            ->filter(static function(Directives $directives) use ($userAgent): bool {
                 return $directives->targets($userAgent);
             });
 
@@ -54,7 +54,7 @@ final class RobotsTxt implements RobotsTxtInterface
 
         return $directives->reduce(
             false,
-            function(bool $carry, Directives $directives) use ($url): bool {
+            static function(bool $carry, Directives $directives) use ($url): bool {
                 if ($carry === true) {
                     return $carry;
                 }

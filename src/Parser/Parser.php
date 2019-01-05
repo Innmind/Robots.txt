@@ -19,7 +19,6 @@ use Innmind\Http\{
     Header,
     Header\Value\Value
 };
-use Innmind\Filesystem\Stream\NullStream;
 use Innmind\Immutable\{
     Map,
     Str
@@ -49,19 +48,14 @@ final class Parser implements ParserInterface
         $response = ($this->transport)(
             new Request(
                 $url,
-                new Method(Method::GET),
+                Method::get(),
                 new ProtocolVersion(2, 0),
-                new Headers(
-                    (new Map('string', Header::class))
-                        ->put(
-                            'User-Agent',
-                            new Header\Header(
-                                'User-Agent',
-                                new Value($this->userAgent)
-                            )
-                        )
-                ),
-                new NullStream
+                Headers::of(
+                    new Header\Header(
+                        'User-Agent',
+                        new Value($this->userAgent)
+                    )
+                )
             )
         );
 
