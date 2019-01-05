@@ -8,7 +8,7 @@ use Innmind\RobotsTxt\{
     Allow,
     Disallow,
     UserAgent,
-    CrawlDelay
+    CrawlDelay,
 };
 use Innmind\Url\{
     UrlInterface,
@@ -20,7 +20,7 @@ use Innmind\Url\{
     Authority\UserInformation\NullPassword,
     Authority\NullHost,
     Authority\NullPort,
-    NullFragment
+    NullFragment,
 };
 use Innmind\Immutable\SetInterface;
 
@@ -128,7 +128,7 @@ final class Directives implements DirectivesInterface
             ->allow
             ->reduce(
                 false,
-                function(string $carry, Allow $allow) use ($url): bool {
+                function(bool $carry, Allow $allow) use ($url): bool {
                     if ($carry === true) {
                         return $carry;
                     }

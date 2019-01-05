@@ -6,7 +6,7 @@ namespace Tests\Innmind\RobotsTxt\RobotsTxt;
 use Innmind\RobotsTxt\{
     RobotsTxt\RobotsTxt,
     RobotsTxt as RobotsTxtInterface,
-    Directives
+    Directives,
 };
 use Innmind\Url\UrlInterface;
 use Innmind\Immutable\Stream;
@@ -49,10 +49,10 @@ class RobotsTxtTest extends TestCase
     {
         $robots = new RobotsTxt(
             $this->createMock(UrlInterface::class),
-            (new Stream(Directives::class))
-                ->add(
-                    $mock = $this->createMock(Directives::class)
-                )
+            Stream::of(
+                Directives::class,
+                $mock = $this->createMock(Directives::class)
+            )
         );
         $url = $this->createMock(UrlInterface::class);
         $mock
@@ -90,13 +90,11 @@ class RobotsTxtTest extends TestCase
     {
         $robots = new RobotsTxt(
             $this->createMock(UrlInterface::class),
-            (new Stream(Directives::class))
-                ->add(
-                    $mock1 = $this->createMock(Directives::class)
-                )
-                ->add(
-                    $mock2 = $this->createMock(Directives::class)
-                )
+            Stream::of(
+                Directives::class,
+                $mock1 = $this->createMock(Directives::class),
+                $mock2 = $this->createMock(Directives::class)
+            )
         );
         $url = $this->createMock(UrlInterface::class);
         $mock1
@@ -127,13 +125,11 @@ class RobotsTxtTest extends TestCase
     {
         $robots = new RobotsTxt(
             $this->createMock(UrlInterface::class),
-            (new Stream(Directives::class))
-                ->add(
-                    $mock1 = $this->createMock(Directives::class)
-                )
-                ->add(
-                    $mock2 = $this->createMock(Directives::class)
-                )
+            Stream::of(
+                Directives::class,
+                $mock1 = $this->createMock(Directives::class),
+                $mock2 = $this->createMock(Directives::class)
+            )
         );
         $mock1
             ->expects($this->once())

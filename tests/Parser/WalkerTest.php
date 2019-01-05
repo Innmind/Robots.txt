@@ -5,11 +5,11 @@ namespace Tests\Innmind\RobotsTxt\Parser;
 
 use Innmind\RobotsTxt\{
     Parser\Walker,
-    Directives
+    Directives,
 };
 use Innmind\Immutable\{
     Str,
-    StreamInterface
+    StreamInterface,
 };
 use PHPUnit\Framework\TestCase;
 

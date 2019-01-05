@@ -6,7 +6,7 @@ namespace Innmind\RobotsTxt;
 use Innmind\Immutable\{
     Str,
     Exception\RegexException,
-    Exception\SubstringException
+    Exception\SubstringException,
 };
 
 final class UrlPattern
@@ -20,7 +20,7 @@ final class UrlPattern
 
     public function matches(string $url): bool
     {
-        if ($this->pattern === '*' || empty($this->pattern)) {
+        if ($this->pattern === '*' || Str::of($this->pattern)->empty()) {
             return true;
         }
 
@@ -51,7 +51,7 @@ final class UrlPattern
      */
     private function matchRegex(string $url): bool
     {
-        $pattern = (new Str($this->pattern))
+        $pattern = Str::of($this->pattern)
             ->pregQuote('#')
             ->replace('\*', '.*')
             ->replace('\^', '^')
@@ -59,11 +59,11 @@ final class UrlPattern
             ->prepend('#')
             ->append('#');
 
-        return (new Str($url))->matches((string) $pattern);
+        return Str::of($url)->matches((string) $pattern);
     }
 
     private function fallUnder(string $url): bool
     {
-        return (new Str($url))->position($this->pattern) === 0;
+        return Str::of($url)->position($this->pattern) === 0;
     }
 }

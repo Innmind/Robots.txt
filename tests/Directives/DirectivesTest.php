@@ -10,7 +10,7 @@ use Innmind\RobotsTxt\{
     Allow,
     Disallow,
     CrawlDelay,
-    UrlPattern
+    UrlPattern,
 };
 use Innmind\Url\Url;
 use Innmind\Immutable\Set;
@@ -89,10 +89,8 @@ class DirectivesTest extends TestCase
     {
         $directives = new Directives(
             $this->createMock(UserAgent::class),
-            (new Set(Allow::class))
-                ->add(new Allow(new UrlPattern($allow))),
-            (new Set(Disallow::class))
-                ->add(new Disallow(new UrlPattern($disallow)))
+            Set::of(Allow::class, new Allow(new UrlPattern($allow))),
+            Set::of(Disallow::class, new Disallow(new UrlPattern($disallow)))
         );
 
         $this->assertSame(
@@ -101,12 +99,11 @@ class DirectivesTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException TypeError
-     * @expectedExceptionMessage Argument 2 must be of type SetInterface<Innmind\RobotsTxt\Allow>
-     */
     public function testThrowWhenInvalidAllowSet()
     {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument 2 must be of type SetInterface<Innmind\RobotsTxt\Allow>');
+
         new Directives(
             $this->createMock(UserAgent::class),
             new Set(UrlPattern::class),
@@ -114,12 +111,11 @@ class DirectivesTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException TypeError
-     * @expectedExceptionMessage Argument 3 must be of type SetInterface<Innmind\RobotsTxt\Disallow>
-     */
     public function testThrowWhenInvalidDisallowSet()
     {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument 3 must be of type SetInterface<Innmind\RobotsTxt\Disallow>');
+
         new Directives(
             $this->createMock(UserAgent::class),
             new Set(Allow::class),
@@ -140,12 +136,16 @@ class DirectivesTest extends TestCase
             $expected,
             (string) new Directives(
                 new UserAgent\UserAgent('*'),
-                (new Set(Allow::class))
-                    ->add(new Allow(new UrlPattern('/foo')))
-                    ->add(new Allow(new UrlPattern('/bar'))),
-                (new Set(Disallow::class))
-                    ->add(new Disallow(new UrlPattern('/baz')))
-                    ->add(new Disallow(new UrlPattern('/'))),
+                Set::of(
+                    Allow::class,
+                    new Allow(new UrlPattern('/foo')),
+                    new Allow(new UrlPattern('/bar'))
+                ),
+                Set::of(
+                    Disallow::class,
+                    new Disallow(new UrlPattern('/baz')),
+                    new Disallow(new UrlPattern('/'))
+                ),
                 new CrawlDelay(10)
             )
         );

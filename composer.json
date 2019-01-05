@@ -14,13 +14,13 @@
         }
     },
     "require": {
-        "php": "~7.1",
+        "php": "~7.2",
         "innmind/url": "~2.0",
-        "innmind/immutable": "~2.0",
-        "innmind/http-transport": "~3.0"
+        "innmind/immutable": "~2.12",
+        "innmind/http-transport": "~4.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~6.0"
+        "phpunit/phpunit": "~7.0"
     },
     "scripts": {
         "test" : "vendor/bin/phpunit --colors=always"

@@ -6,7 +6,7 @@ namespace Innmind\RobotsTxt\Parser;
 use Innmind\RobotsTxt\{
     Parser as ParserInterface,
     RobotsTxt,
-    Exception\FileNotFound
+    Exception\FileNotFound,
 };
 use Innmind\HttpTransport\Transport;
 use Innmind\Url\UrlInterface;
@@ -17,12 +17,11 @@ use Innmind\Http\{
     ProtocolVersion\ProtocolVersion,
     Headers\Headers,
     Header,
-    Header\Value\Value
+    Header\Value\Value,
 };
-use Innmind\Filesystem\Stream\NullStream;
 use Innmind\Immutable\{
     Map,
-    Str
+    Str,
 };
 
 final class Parser implements ParserInterface
@@ -46,22 +45,17 @@ final class Parser implements ParserInterface
      */
     public function __invoke(UrlInterface $url): RobotsTxt
     {
-        $response = $this->transport->fulfill(
+        $response = ($this->transport)(
             new Request(
                 $url,
-                new Method(Method::GET),
+                Method::get(),
                 new ProtocolVersion(2, 0),
-                new Headers(
-                    (new Map('string', Header::class))
-                        ->put(
-                            'User-Agent',
-                            new Header\Header(
-                                'User-Agent',
-                                new Value($this->userAgent)
-                            )
-                        )
-                ),
-                new NullStream
+                Headers::of(
+                    new Header\Header(
+                        'User-Agent',
+                        new Value($this->userAgent)
+                    )
+                )
             )
         );
 

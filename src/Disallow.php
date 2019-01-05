@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace Innmind\RobotsTxt;
 
+use Innmind\Immutable\Str;
+
 final class Disallow
 {
     private $pattern;
@@ -14,7 +16,7 @@ final class Disallow
 
     public function matches(string $url): bool
     {
-        if (empty((string) $this->pattern)) {
+        if (Str::of((string) $this->pattern)->empty()) {
             return false;
         }
 

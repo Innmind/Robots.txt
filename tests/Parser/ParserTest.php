@@ -7,14 +7,15 @@ use Innmind\RobotsTxt\{
     Parser\Parser,
     Parser as ParserInterface,
     Parser\Walker,
-    RobotsTxt
+    RobotsTxt,
+    Exception\FileNotFound,
 };
 use Innmind\HttpTransport\Transport;
 use Innmind\Url\UrlInterface;
 use Innmind\Http\Message\{
     Request\Request,
     StatusCode\StatusCode,
-    Response
+    Response,
 };
 use Innmind\Stream\Readable;
 use PHPUnit\Framework\TestCase;
@@ -43,14 +44,14 @@ class ParserTest extends TestCase
         $url = $this->createMock(UrlInterface::class);
         $transport
             ->expects($this->once())
-            ->method('fulfill')
+            ->method('__invoke')
             ->with($this->callback(function(Request $request) use ($url): bool {
                 return $request->url() === $url &&
                     (string) $request->method() === 'GET' &&
                     (string) $request->protocolVersion() === '2.0' &&
                     $request->headers()->count() === 1 &&
                     $request->headers()->has('user-agent') &&
-                    (string) $request->headers()->get('user-agent') === 'User-Agent : InnmindCrawler' &&
+                    (string) $request->headers()->get('user-agent') === 'User-Agent: InnmindCrawler' &&
                     (string) $request->body() === '';
             }))
             ->willReturn(
@@ -100,9 +101,6 @@ TXT
         $this->assertSame($expected, (string) $robots);
     }
 
-    /**
-     * @expectedException Innmind\RobotsTxt\Exception\FileNotFound
-     */
     public function testThrowWhenRequestNotFulfilled()
     {
         $parse = new Parser(
@@ -113,7 +111,7 @@ TXT
         $url = $this->createMock(UrlInterface::class);
         $transport
             ->expects($this->once())
-            ->method('fulfill')
+            ->method('__invoke')
             ->willReturn(
                 $response = $this->createMock(Response::class)
             );
@@ -124,6 +122,8 @@ TXT
         $response
             ->expects($this->never())
             ->method('body');
+
+        $this->expectException(FileNotFound::class);
 
         $parse($url);
     }
