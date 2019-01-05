@@ -6,6 +6,7 @@ namespace Tests\Innmind\RobotsTxt\UserAgent;
 use Innmind\RobotsTxt\{
     UserAgent\UserAgent,
     UserAgent as UserAgentInterface,
+    Exception\DomainException,
 };
 use PHPUnit\Framework\TestCase;
 
@@ -19,11 +20,10 @@ class UserAgentTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\RobotsTxt\Exception\DomainException
-     */
     public function testThrowWhenEmptyUserAgent()
     {
+        $this->expectException(DomainException::class);
+
         new UserAgent('');
     }
 

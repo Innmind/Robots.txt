@@ -8,6 +8,7 @@ use Innmind\RobotsTxt\{
     Parser as ParserInterface,
     Parser\Walker,
     RobotsTxt,
+    Exception\FileNotFound,
 };
 use Innmind\HttpTransport\Transport;
 use Innmind\Url\UrlInterface;
@@ -100,9 +101,6 @@ TXT
         $this->assertSame($expected, (string) $robots);
     }
 
-    /**
-     * @expectedException Innmind\RobotsTxt\Exception\FileNotFound
-     */
     public function testThrowWhenRequestNotFulfilled()
     {
         $parse = new Parser(
@@ -124,6 +122,8 @@ TXT
         $response
             ->expects($this->never())
             ->method('body');
+
+        $this->expectException(FileNotFound::class);
 
         $parse($url);
     }

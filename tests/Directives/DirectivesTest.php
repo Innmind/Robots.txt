@@ -99,12 +99,11 @@ class DirectivesTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException TypeError
-     * @expectedExceptionMessage Argument 2 must be of type SetInterface<Innmind\RobotsTxt\Allow>
-     */
     public function testThrowWhenInvalidAllowSet()
     {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument 2 must be of type SetInterface<Innmind\RobotsTxt\Allow>');
+
         new Directives(
             $this->createMock(UserAgent::class),
             new Set(UrlPattern::class),
@@ -112,12 +111,11 @@ class DirectivesTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException TypeError
-     * @expectedExceptionMessage Argument 3 must be of type SetInterface<Innmind\RobotsTxt\Disallow>
-     */
     public function testThrowWhenInvalidDisallowSet()
     {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument 3 must be of type SetInterface<Innmind\RobotsTxt\Disallow>');
+
         new Directives(
             $this->createMock(UserAgent::class),
             new Set(Allow::class),
