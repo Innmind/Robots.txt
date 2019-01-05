@@ -5,7 +5,7 @@ namespace Tests\Innmind\RobotsTxt;
 
 use Innmind\RobotsTxt\{
     Allow,
-    UrlPattern
+    UrlPattern,
 };
 use PHPUnit\Framework\TestCase;
 

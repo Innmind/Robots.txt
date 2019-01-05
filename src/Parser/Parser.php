@@ -6,7 +6,7 @@ namespace Innmind\RobotsTxt\Parser;
 use Innmind\RobotsTxt\{
     Parser as ParserInterface,
     RobotsTxt,
-    Exception\FileNotFound
+    Exception\FileNotFound,
 };
 use Innmind\HttpTransport\Transport;
 use Innmind\Url\UrlInterface;
@@ -17,11 +17,11 @@ use Innmind\Http\{
     ProtocolVersion\ProtocolVersion,
     Headers\Headers,
     Header,
-    Header\Value\Value
+    Header\Value\Value,
 };
 use Innmind\Immutable\{
     Map,
-    Str
+    Str,
 };
 
 final class Parser implements ParserInterface

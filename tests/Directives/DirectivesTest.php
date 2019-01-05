@@ -10,7 +10,7 @@ use Innmind\RobotsTxt\{
     Allow,
     Disallow,
     CrawlDelay,
-    UrlPattern
+    UrlPattern,
 };
 use Innmind\Url\Url;
 use Innmind\Immutable\Set;

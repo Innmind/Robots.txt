@@ -6,7 +6,7 @@ namespace Innmind\RobotsTxt;
 use Innmind\Immutable\{
     Str,
     Exception\RegexException,
-    Exception\SubstringException
+    Exception\SubstringException,
 };
 
 final class UrlPattern

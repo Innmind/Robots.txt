@@ -9,7 +9,7 @@ use Innmind\RobotsTxt\{
     Disallow,
     UrlPattern,
     CrawlDelay,
-    Directives
+    Directives,
 };
 use Innmind\Immutable\{
     Str,
@@ -17,7 +17,7 @@ use Innmind\Immutable\{
     Stream,
     Set,
     Pair,
-    Map
+    Map,
 };
 
 final class Walker

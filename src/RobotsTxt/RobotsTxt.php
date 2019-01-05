@@ -5,7 +5,7 @@ namespace Innmind\RobotsTxt\RobotsTxt;
 
 use Innmind\RobotsTxt\{
     RobotsTxt as RobotsTxtInterface,
-    Directives
+    Directives,
 };
 use Innmind\Url\UrlInterface;
 use Innmind\Immutable\StreamInterface;

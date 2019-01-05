@@ -7,14 +7,14 @@ use Innmind\RobotsTxt\{
     Parser\Parser,
     Parser as ParserInterface,
     Parser\Walker,
-    RobotsTxt
+    RobotsTxt,
 };
 use Innmind\HttpTransport\Transport;
 use Innmind\Url\UrlInterface;
 use Innmind\Http\Message\{
     Request\Request,
     StatusCode\StatusCode,
-    Response
+    Response,
 };
 use Innmind\Stream\Readable;
 use PHPUnit\Framework\TestCase;

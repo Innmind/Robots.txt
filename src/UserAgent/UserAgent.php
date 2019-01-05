@@ -5,7 +5,7 @@ namespace Innmind\RobotsTxt\UserAgent;
 
 use Innmind\RobotsTxt\{
     UserAgent as UserAgentInterface,
-    Exception\DomainException
+    Exception\DomainException,
 };
 use Innmind\Immutable\Str;
 

@@ -5,7 +5,7 @@ namespace Tests\Innmind\RobotsTxt\UserAgent;
 
 use Innmind\RobotsTxt\{
     UserAgent\UserAgent,
-    UserAgent as UserAgentInterface
+    UserAgent as UserAgentInterface,
 };
 use PHPUnit\Framework\TestCase;
 
