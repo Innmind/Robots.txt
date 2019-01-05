@@ -43,14 +43,14 @@ class ParserTest extends TestCase
         $url = $this->createMock(UrlInterface::class);
         $transport
             ->expects($this->once())
-            ->method('fulfill')
+            ->method('__invoke')
             ->with($this->callback(function(Request $request) use ($url): bool {
                 return $request->url() === $url &&
                     (string) $request->method() === 'GET' &&
                     (string) $request->protocolVersion() === '2.0' &&
                     $request->headers()->count() === 1 &&
                     $request->headers()->has('user-agent') &&
-                    (string) $request->headers()->get('user-agent') === 'User-Agent : InnmindCrawler' &&
+                    (string) $request->headers()->get('user-agent') === 'User-Agent: InnmindCrawler' &&
                     (string) $request->body() === '';
             }))
             ->willReturn(
@@ -113,7 +113,7 @@ TXT
         $url = $this->createMock(UrlInterface::class);
         $transport
             ->expects($this->once())
-            ->method('fulfill')
+            ->method('__invoke')
             ->willReturn(
                 $response = $this->createMock(Response::class)
             );

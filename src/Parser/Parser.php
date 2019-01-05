@@ -46,7 +46,7 @@ final class Parser implements ParserInterface
      */
     public function __invoke(UrlInterface $url): RobotsTxt
     {
-        $response = $this->transport->fulfill(
+        $response = ($this->transport)(
             new Request(
                 $url,
                 new Method(Method::GET),
