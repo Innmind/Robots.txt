@@ -20,7 +20,7 @@ final class UrlPattern
 
     public function matches(string $url): bool
     {
-        if ($this->pattern === '*' || empty($this->pattern)) {
+        if ($this->pattern === '*' || Str::of($this->pattern)->empty()) {
             return true;
         }
 

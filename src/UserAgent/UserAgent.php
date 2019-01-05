@@ -16,7 +16,7 @@ final class UserAgent implements UserAgentInterface
 
     public function __construct(string $value)
     {
-        if (empty($value)) {
+        if (Str::of($value)->empty()) {
             throw new DomainException;
         }
 
