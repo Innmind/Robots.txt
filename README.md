@@ -19,13 +19,13 @@ composer require innmind/robots-txt
 ```php
 use Innmind\RobotsTxt\{
     Parser,
-    Parser\Walker
+    Parser\Walker,
 };
-use Innmind\HttpTransport\TransportInterface;
+use Innmind\HttpTransport\Transport;
 use Innmind\Url\Url;
 
 $parse = new Parser(
-    /* an instance of TransportInterface */,
+    /* an instance of Transport */,
     new Walker,
     'My user agent'
 );
