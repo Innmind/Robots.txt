@@ -12,7 +12,10 @@ use Innmind\RobotsTxt\{
 };
 use Innmind\Url\Url;
 use Innmind\Immutable\Set;
-use function Innmind\Immutable\join;
+use function Innmind\Immutable\{
+    assertSet,
+    join,
+};
 
 final class Directives implements DirectivesInterface
 {
@@ -28,19 +31,8 @@ final class Directives implements DirectivesInterface
         Set $disallow,
         CrawlDelay $crawlDelay = null
     ) {
-        if ((string) $allow->type() !== Allow::class) {
-            throw new \TypeError(sprintf(
-                'Argument 2 must be of type Set<%s>',
-                Allow::class
-            ));
-        }
-
-        if ((string) $disallow->type() !== Disallow::class) {
-            throw new \TypeError(sprintf(
-                'Argument 3 must be of type Set<%s>',
-                Disallow::class
-            ));
-        }
+        assertSet(Allow::class, $allow, 2);
+        assertSet(Disallow::class, $disallow, 3);
 
         $this->userAgent = $userAgent;
         $this->allow = $allow;
@@ -66,7 +58,7 @@ final class Directives implements DirectivesInterface
                     }
 
                     return $disallow->matches($url);
-                }
+                },
             );
 
         if ($disallow === false) {
@@ -134,7 +126,7 @@ final class Directives implements DirectivesInterface
                     }
 
                     return $allow->matches($url);
-                }
+                },
             );
     }
 

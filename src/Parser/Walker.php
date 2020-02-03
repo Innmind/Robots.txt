@@ -30,7 +30,7 @@ final class Walker
             'user-agent',
             'allow',
             'disallow',
-            'crawl-delay'
+            'crawl-delay',
         );
     }
 
@@ -47,7 +47,7 @@ final class Walker
                     ->trim();
             })
             ->filter(static function(Str $line): bool {
-                return $line->length() > 0;
+                return !$line->empty();
             })
             ->filter(static function(Str $line): bool {
                 return $line->split(':')->size() >= 2;
@@ -62,13 +62,13 @@ final class Walker
                         static fn(Str $part): string => $part->toString(),
                     );
 
-                    return $carry->add(
+                    return ($carry)(
                         new Pair(
                             $parts->first()->toLower()->trim(),
-                            join(':', $directive)->trim()
-                        )
+                            join(':', $directive)->trim(),
+                        ),
                     );
-                }
+                },
             )
             ->filter(function(Pair $line): bool {
                 return $this->supportedKeys->contains($line->key()->toString());
@@ -77,32 +77,32 @@ final class Walker
                 Sequence::objects(),
                 function(Sequence $carry, Pair $line): Sequence {
                     return $this->transformLineToObject($carry, $line);
-                }
+                },
             )
             ->reduce(
                 Sequence::objects(),
                 function(Sequence $carry, $object): Sequence {
                     return $this->groupUserAgents($carry, $object);
-                }
+                },
             )
             ->reduce(
                 Sequence::of(Map::class),
                 function(Sequence $carry, $object): Sequence {
                     return $this->groupDirectives($carry, $object);
-                }
+                },
             )
             ->reduce(
                 Sequence::of(Directives::class),
                 static function(Sequence $carry, Map $map): Sequence {
-                    return $carry->add(
+                    return ($carry)(
                         new Directives\Directives(
                             $map->get('user-agent'),
                             $map->get('allow'),
                             $map->get('disallow'),
-                            $map->contains('crawl-delay') ? $map->get('crawl-delay') : null
-                        )
+                            $map->contains('crawl-delay') ? $map->get('crawl-delay') : null,
+                        ),
                     );
-                }
+                },
             );
     }
 
@@ -114,27 +114,27 @@ final class Walker
     private function transformLineToObject(Sequence $carry, Pair $line): Sequence {
         switch ($line->key()->toString()) {
             case 'user-agent':
-                return $carry->add(
-                    new UserAgent\UserAgent($line->value()->toString())
+                return ($carry)(
+                    new UserAgent\UserAgent($line->value()->toString()),
                 );
 
             case 'allow':
-                return $carry->add(
+                return ($carry)(
                     new Allow(
-                        new UrlPattern($line->value()->toString())
-                    )
+                        new UrlPattern($line->value()->toString()),
+                    ),
                 );
 
             case 'disallow':
-                return $carry->add(
+                return ($carry)(
                     new Disallow(
-                        new UrlPattern($line->value()->toString())
-                    )
+                        new UrlPattern($line->value()->toString()),
+                    ),
                 );
 
             case 'crawl-delay':
-                return $carry->add(
-                    new CrawlDelay((int) $line->value()->toString())
+                return ($carry)(
+                    new CrawlDelay((int) $line->value()->toString()),
                 );
         }
     }
@@ -146,8 +146,8 @@ final class Walker
      * @return Sequence<object>
      */
     private function groupUserAgents(Sequence $carry, $object): Sequence {
-        if ($carry->size() === 0) {
-            return $carry->add($object);
+        if ($carry->empty()) {
+            return ($carry)($object);
         }
 
         $last = $carry->last();
@@ -156,7 +156,7 @@ final class Walker
             !$last instanceof UserAgent ||
             !$object instanceof UserAgent
         ) {
-            return $carry->add($object);
+            return ($carry)($object);
         }
 
         return $carry
@@ -164,8 +164,8 @@ final class Walker
             ->add(
                 new UserAgent\CombinedUserAgent(
                     $last,
-                    $object
-                )
+                    $object,
+                ),
             );
     }
 
@@ -177,7 +177,7 @@ final class Walker
      */
     private function groupDirectives(Sequence $carry, $object): Sequence {
         if ($object instanceof UserAgent) {
-            return $carry->add(
+            return ($carry)(
                 Map::of('string', 'object')
                     ('user-agent', $object)
                     ('allow', Set::of(Allow::class))
@@ -193,21 +193,21 @@ final class Walker
 
         switch (true) {
             case $object instanceof Allow:
-                $last = $last->put(
+                $last = ($last)(
                     'allow',
-                    $last->get('allow')->add($object)
+                    $last->get('allow')->add($object),
                 );
                 break;
 
             case $object instanceof Disallow:
-                $last = $last->put(
+                $last = ($last)(
                     'disallow',
-                    $last->get('disallow')->add($object)
+                    $last->get('disallow')->add($object),
                 );
                 break;
 
             case $object instanceof CrawlDelay:
-                $last = $last->put('crawl-delay', $object);
+                $last = ($last)('crawl-delay', $object);
         }
 
         return $carry

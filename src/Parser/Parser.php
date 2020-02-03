@@ -22,16 +22,16 @@ use Innmind\Http\{
 
 final class Parser implements ParserInterface
 {
-    private Transport $transport;
+    private Transport $fulfill;
     private Walker $walker;
     private string $userAgent;
 
     public function __construct(
-        Transport $transport,
+        Transport $fulfill,
         Walker $walker,
         string $userAgent
     ) {
-        $this->transport = $transport;
+        $this->fulfill = $fulfill;
         $this->walker = $walker;
         $this->userAgent = $userAgent;
     }
@@ -41,7 +41,7 @@ final class Parser implements ParserInterface
      */
     public function __invoke(Url $url): RobotsTxt
     {
-        $response = ($this->transport)(
+        $response = ($this->fulfill)(
             new Request(
                 $url,
                 Method::get(),
@@ -49,10 +49,10 @@ final class Parser implements ParserInterface
                 Headers::of(
                     new Header\Header(
                         'User-Agent',
-                        new Value($this->userAgent)
-                    )
-                )
-            )
+                        new Value($this->userAgent),
+                    ),
+                ),
+            ),
         );
 
         if ($response->statusCode()->value() !== StatusCode::codes()->get('OK')) {
@@ -63,7 +63,7 @@ final class Parser implements ParserInterface
 
         return new RobotsTxt\RobotsTxt(
             $url,
-            $directives
+            $directives,
         );
     }
 }

@@ -9,7 +9,10 @@ use Innmind\RobotsTxt\{
 };
 use Innmind\Url\Url;
 use Innmind\Immutable\Sequence;
-use function Innmind\Immutable\join;
+use function Innmind\Immutable\{
+    assertSequence,
+    join,
+};
 
 final class RobotsTxt implements RobotsTxtInterface
 {
@@ -20,12 +23,7 @@ final class RobotsTxt implements RobotsTxtInterface
         Url $url,
         Sequence $directives
     ) {
-        if ((string) $directives->type() !== Directives::class) {
-            throw new \TypeError(sprintf(
-                'Argument 2 must be of type Sequence<%s>',
-                Directives::class
-            ));
-        }
+        assertSequence(Directives::class, $directives, 2);
 
         $this->url = $url;
         $this->directives = $directives;
@@ -49,7 +47,7 @@ final class RobotsTxt implements RobotsTxtInterface
                 return $directives->targets($userAgent);
             });
 
-        if ($directives->size() === 0) {
+        if ($directives->empty()) {
             return false;
         }
 
@@ -61,7 +59,7 @@ final class RobotsTxt implements RobotsTxtInterface
                 }
 
                 return $directives->disallows($url);
-            }
+            },
         );
     }
 
