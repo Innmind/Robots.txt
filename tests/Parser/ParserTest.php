@@ -11,13 +11,14 @@ use Innmind\RobotsTxt\{
     Exception\FileNotFound,
 };
 use Innmind\HttpTransport\Transport;
-use Innmind\Url\UrlInterface;
+use Innmind\Url\Url;
 use Innmind\Http\Message\{
     Request\Request,
-    StatusCode\StatusCode,
+    StatusCode,
     Response,
 };
 use Innmind\Stream\Readable;
+use Innmind\Immutable\Str;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
@@ -41,18 +42,18 @@ class ParserTest extends TestCase
             new Walker,
             'InnmindCrawler'
         );
-        $url = $this->createMock(UrlInterface::class);
+        $url = Url::of('http://example.com');
         $transport
             ->expects($this->once())
             ->method('__invoke')
             ->with($this->callback(function(Request $request) use ($url): bool {
                 return $request->url() === $url &&
-                    (string) $request->method() === 'GET' &&
-                    (string) $request->protocolVersion() === '2.0' &&
+                    $request->method()->toString() === 'GET' &&
+                    $request->protocolVersion()->toString() === '2.0' &&
                     $request->headers()->count() === 1 &&
-                    $request->headers()->has('user-agent') &&
-                    (string) $request->headers()->get('user-agent') === 'User-Agent: InnmindCrawler' &&
-                    (string) $request->body() === '';
+                    $request->headers()->contains('user-agent') &&
+                    $request->headers()->get('user-agent')->toString() === 'User-Agent: InnmindCrawler' &&
+                    $request->body()->toString() === '';
             }))
             ->willReturn(
                 $response = $this->createMock(Response::class)
@@ -69,8 +70,8 @@ class ParserTest extends TestCase
             );
         $stream
             ->expects($this->once())
-            ->method('__toString')
-            ->willReturn(<<<TXT
+            ->method('read')
+            ->willReturn(Str::of(<<<TXT
 Sitemap : foo.xml
 Host : example.com
 Crawl-delay: 10
@@ -84,7 +85,7 @@ Disallow :
 Crawl-delay : 10
 Crawl-delay : 20
 TXT
-            );
+            ));
         $expected = 'User-agent: Foo'."\n";
         $expected .= 'User-agent: Bar'."\n";
         $expected .= 'Allow: /foo'."\n";
@@ -108,7 +109,7 @@ TXT
             new Walker,
             'InnmindCrawler'
         );
-        $url = $this->createMock(UrlInterface::class);
+        $url = Url::of('http://example.com');
         $transport
             ->expects($this->once())
             ->method('__invoke')

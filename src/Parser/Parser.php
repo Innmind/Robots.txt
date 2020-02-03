@@ -9,19 +9,15 @@ use Innmind\RobotsTxt\{
     Exception\FileNotFound,
 };
 use Innmind\HttpTransport\Transport;
-use Innmind\Url\UrlInterface;
+use Innmind\Url\Url;
 use Innmind\Http\{
     Message\Request\Request,
-    Message\Method\Method,
-    Message\StatusCode\StatusCode,
-    ProtocolVersion\ProtocolVersion,
-    Headers\Headers,
+    Message\Method,
+    Message\StatusCode,
+    ProtocolVersion,
+    Headers,
     Header,
     Header\Value\Value,
-};
-use Innmind\Immutable\{
-    Map,
-    Str,
 };
 
 final class Parser implements ParserInterface
@@ -43,7 +39,7 @@ final class Parser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public function __invoke(UrlInterface $url): RobotsTxt
+    public function __invoke(Url $url): RobotsTxt
     {
         $response = ($this->transport)(
             new Request(
@@ -63,7 +59,7 @@ final class Parser implements ParserInterface
             throw new FileNotFound;
         }
 
-        $directives = ($this->walker)(new Str((string) $response->body()));
+        $directives = ($this->walker)($response->body()->read());
 
         return new RobotsTxt\RobotsTxt(
             $url,

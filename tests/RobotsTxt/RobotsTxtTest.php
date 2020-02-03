@@ -8,8 +8,8 @@ use Innmind\RobotsTxt\{
     RobotsTxt as RobotsTxtInterface,
     Directives,
 };
-use Innmind\Url\UrlInterface;
-use Innmind\Immutable\Stream;
+use Innmind\Url\Url;
+use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
 
 class RobotsTxtTest extends TestCase
@@ -19,8 +19,8 @@ class RobotsTxtTest extends TestCase
         $this->assertInstanceOf(
             RobotsTxtInterface::class,
             new RobotsTxt(
-                $this->createMock(UrlInterface::class),
-                new Stream(Directives::class)
+                Url::of('http://example.com/robots.txt'),
+                Sequence::of(Directives::class)
             )
         );
     }
@@ -28,8 +28,8 @@ class RobotsTxtTest extends TestCase
     public function testUrl()
     {
         $robots = new RobotsTxt(
-            $url = $this->createMock(UrlInterface::class),
-            new Stream(Directives::class)
+            $url = Url::of('http://example.com/robots.txt'),
+            Sequence::of(Directives::class)
         );
 
         $this->assertSame($url, $robots->url());
@@ -38,8 +38,8 @@ class RobotsTxtTest extends TestCase
     public function testDirectives()
     {
         $robots = new RobotsTxt(
-            $this->createMock(UrlInterface::class),
-            $directives = new Stream(Directives::class)
+            Url::of('http://example.com/robots.txt'),
+            $directives = Sequence::of(Directives::class)
         );
 
         $this->assertSame($directives, $robots->directives());
@@ -48,13 +48,13 @@ class RobotsTxtTest extends TestCase
     public function testDisallows()
     {
         $robots = new RobotsTxt(
-            $this->createMock(UrlInterface::class),
-            Stream::of(
+            Url::of('http://example.com/robots.txt'),
+            Sequence::of(
                 Directives::class,
                 $mock = $this->createMock(Directives::class)
             )
         );
-        $url = $this->createMock(UrlInterface::class);
+        $url = Url::of('http://example.com/robots.txt');
         $mock
             ->expects($this->at(0))
             ->method('targets')
@@ -89,14 +89,14 @@ class RobotsTxtTest extends TestCase
     public function testFallbackDirectivesWhenUserAgentMatchesMultipleOnes()
     {
         $robots = new RobotsTxt(
-            $this->createMock(UrlInterface::class),
-            Stream::of(
+            Url::of('http://example.com/robots.txt'),
+            Sequence::of(
                 Directives::class,
                 $mock1 = $this->createMock(Directives::class),
                 $mock2 = $this->createMock(Directives::class)
             )
         );
-        $url = $this->createMock(UrlInterface::class);
+        $url = Url::of('http://example.com/robots.txt');
         $mock1
             ->expects($this->at(0))
             ->method('targets')
@@ -124,8 +124,8 @@ class RobotsTxtTest extends TestCase
     public function testStringCast()
     {
         $robots = new RobotsTxt(
-            $this->createMock(UrlInterface::class),
-            Stream::of(
+            Url::of('http://example.com/robots.txt'),
+            Sequence::of(
                 Directives::class,
                 $mock1 = $this->createMock(Directives::class),
                 $mock2 = $this->createMock(Directives::class)

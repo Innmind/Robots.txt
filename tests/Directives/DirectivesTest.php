@@ -24,8 +24,8 @@ class DirectivesTest extends TestCase
             DirectivesInterface::class,
             new Directives(
                 $this->createMock(UserAgent::class),
-                new Set(Allow::class),
-                new Set(Disallow::class)
+                Set::of(Allow::class),
+                Set::of(Disallow::class)
             )
         );
     }
@@ -34,8 +34,8 @@ class DirectivesTest extends TestCase
     {
         $directives = new Directives(
             $userAgent = $this->createMock(UserAgent::class),
-            new Set(Allow::class),
-            new Set(Disallow::class)
+            Set::of(Allow::class),
+            Set::of(Disallow::class)
         );
         $userAgent
             ->expects($this->at(0))
@@ -56,15 +56,15 @@ class DirectivesTest extends TestCase
     {
         $directives = new Directives(
             $this->createMock(UserAgent::class),
-            new Set(Allow::class),
-            new Set(Disallow::class)
+            Set::of(Allow::class),
+            Set::of(Disallow::class)
         );
         $this->assertFalse($directives->hasCrawlDelay());
 
         $directives = new Directives(
             $this->createMock(UserAgent::class),
-            new Set(Allow::class),
-            new Set(Disallow::class),
+            Set::of(Allow::class),
+            Set::of(Disallow::class),
             new CrawlDelay(0)
         );
         $this->assertTrue($directives->hasCrawlDelay());
@@ -74,8 +74,8 @@ class DirectivesTest extends TestCase
     {
         $directives = new Directives(
             $userAgent = $this->createMock(UserAgent::class),
-            new Set(Allow::class),
-            new Set(Disallow::class),
+            Set::of(Allow::class),
+            Set::of(Disallow::class),
             $delay = new CrawlDelay(0)
         );
 
@@ -95,31 +95,31 @@ class DirectivesTest extends TestCase
 
         $this->assertSame(
             $expected,
-            $directives->disallows(Url::fromString($url))
+            $directives->disallows(Url::of($url))
         );
     }
 
     public function testThrowWhenInvalidAllowSet()
     {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 2 must be of type SetInterface<Innmind\RobotsTxt\Allow>');
+        $this->expectExceptionMessage('Argument 2 must be of type Set<Innmind\RobotsTxt\Allow>');
 
         new Directives(
             $this->createMock(UserAgent::class),
-            new Set(UrlPattern::class),
-            new Set(Disallow::class)
+            Set::of(UrlPattern::class),
+            Set::of(Disallow::class)
         );
     }
 
     public function testThrowWhenInvalidDisallowSet()
     {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 3 must be of type SetInterface<Innmind\RobotsTxt\Disallow>');
+        $this->expectExceptionMessage('Argument 3 must be of type Set<Innmind\RobotsTxt\Disallow>');
 
         new Directives(
             $this->createMock(UserAgent::class),
-            new Set(Allow::class),
-            new Set(UrlPattern::class)
+            Set::of(Allow::class),
+            Set::of(UrlPattern::class)
         );
     }
 

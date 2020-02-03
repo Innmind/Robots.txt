@@ -3,17 +3,17 @@ declare(strict_types = 1);
 
 namespace Innmind\RobotsTxt;
 
-use Innmind\Url\UrlInterface;
-use Innmind\Immutable\StreamInterface;
+use Innmind\Url\Url;
+use Innmind\Immutable\Sequence;
 
 interface RobotsTxt
 {
-    public function url(): UrlInterface;
+    public function url(): Url;
 
     /**
-     * @return StreamInterface<Directives>
+     * @return Sequence<Directives>
      */
-    public function directives(): StreamInterface;
-    public function disallows(string $userAgent, UrlInterface $url): bool;
+    public function directives(): Sequence;
+    public function disallows(string $userAgent, Url $url): bool;
     public function toString(): string;
 }

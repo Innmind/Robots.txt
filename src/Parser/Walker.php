@@ -13,12 +13,12 @@ use Innmind\RobotsTxt\{
 };
 use Innmind\Immutable\{
     Str,
-    StreamInterface,
-    Stream,
+    Sequence,
     Set,
     Pair,
     Map,
 };
+use function Innmind\Immutable\join;
 
 final class Walker
 {
@@ -26,8 +26,7 @@ final class Walker
 
     public function __construct()
     {
-        $this->supportedKeys = Set::of(
-            'string',
+        $this->supportedKeys = Set::strings(
             'user-agent',
             'allow',
             'disallow',
@@ -36,9 +35,9 @@ final class Walker
     }
 
     /**
-     * @return StreamInterface<Directives>
+     * @return Sequence<Directives>
      */
-    public function __invoke(Str $robots): StreamInterface
+    public function __invoke(Str $robots): Sequence
     {
         return $robots
             ->split("\n")
@@ -54,48 +53,53 @@ final class Walker
                 return $line->split(':')->size() >= 2;
             })
             ->reduce(
-                new Stream(Pair::class),
-                static function(Stream $carry, Str $line): Stream {
+                Sequence::of(Pair::class),
+                static function(Sequence $carry, Str $line): Sequence {
                     $parts = $line->split(':');
+
+                    $directive = $parts->drop(1)->mapTo(
+                        'string',
+                        static fn(Str $part): string => $part->toString(),
+                    );
 
                     return $carry->add(
                         new Pair(
                             $parts->first()->toLower()->trim(),
-                            $parts->drop(1)->join(':')->trim()
+                            join(':', $directive)->trim()
                         )
                     );
                 }
             )
             ->filter(function(Pair $line): bool {
-                return $this->supportedKeys->contains((string) $line->key());
+                return $this->supportedKeys->contains($line->key()->toString());
             })
             ->reduce(
-                new Stream('object'),
-                function(Stream $carry, Pair $line): Stream {
+                Sequence::objects(),
+                function(Sequence $carry, Pair $line): Sequence {
                     return $this->transformLineToObject($carry, $line);
                 }
             )
             ->reduce(
-                new Stream('object'),
-                function(Stream $carry, $object): Stream {
+                Sequence::objects(),
+                function(Sequence $carry, $object): Sequence {
                     return $this->groupUserAgents($carry, $object);
                 }
             )
             ->reduce(
-                new Stream(Map::class),
-                function(Stream $carry, $object): Stream {
+                Sequence::of(Map::class),
+                function(Sequence $carry, $object): Sequence {
                     return $this->groupDirectives($carry, $object);
                 }
             )
             ->reduce(
-                new Stream(Directives::class),
-                static function(Stream $carry, Map $map): Stream {
+                Sequence::of(Directives::class),
+                static function(Sequence $carry, Map $map): Sequence {
                     return $carry->add(
                         new Directives\Directives(
                             $map->get('user-agent'),
                             $map->get('allow'),
                             $map->get('disallow'),
-                            $map['crawl-delay'] ?? null
+                            $map->contains('crawl-delay') ? $map->get('crawl-delay') : null
                         )
                     );
                 }
@@ -103,45 +107,45 @@ final class Walker
     }
 
     /**
-     * @param Stream<object> $carry
+     * @param Sequence<object> $carry
      * @param Pair<Str, Str> $line
-     * @return Stream<object>
+     * @return Sequence<object>
      */
-    private function transformLineToObject(Stream $carry, Pair $line): Stream {
-        switch ((string) $line->key()) {
+    private function transformLineToObject(Sequence $carry, Pair $line): Sequence {
+        switch ($line->key()->toString()) {
             case 'user-agent':
                 return $carry->add(
-                    new UserAgent\UserAgent((string) $line->value())
+                    new UserAgent\UserAgent($line->value()->toString())
                 );
 
             case 'allow':
                 return $carry->add(
                     new Allow(
-                        new UrlPattern((string) $line->value())
+                        new UrlPattern($line->value()->toString())
                     )
                 );
 
             case 'disallow':
                 return $carry->add(
                     new Disallow(
-                        new UrlPattern((string) $line->value())
+                        new UrlPattern($line->value()->toString())
                     )
                 );
 
             case 'crawl-delay':
                 return $carry->add(
-                    new CrawlDelay((int) (string) $line->value())
+                    new CrawlDelay((int) $line->value()->toString())
                 );
         }
     }
 
     /**
-     * @param Stream<object> $carry
+     * @param Sequence<object> $carry
      * @param object $object
      *
-     * @return Stream<object>
+     * @return Sequence<object>
      */
-    private function groupUserAgents(Stream $carry, $object): Stream {
+    private function groupUserAgents(Sequence $carry, $object): Sequence {
         if ($carry->size() === 0) {
             return $carry->add($object);
         }
@@ -166,18 +170,18 @@ final class Walker
     }
 
     /**
-     * @param Stream<Map<string, object>> $carry
+     * @param Sequence<Map<string, object>> $carry
      * @param object $object
      *
-     * @return Stream<Map<string, string>>
+     * @return Sequence<Map<string, string>>
      */
-    private function groupDirectives(Stream $carry, $object): Stream {
+    private function groupDirectives(Sequence $carry, $object): Sequence {
         if ($object instanceof UserAgent) {
             return $carry->add(
                 Map::of('string', 'object')
                     ('user-agent', $object)
-                    ('allow', new Set(Allow::class))
-                    ('disallow', new Set(Disallow::class))
+                    ('allow', Set::of(Allow::class))
+                    ('disallow', Set::of(Disallow::class))
             );
         }
 

@@ -10,44 +10,34 @@ use Innmind\RobotsTxt\{
     UserAgent,
     CrawlDelay,
 };
-use Innmind\Url\{
-    UrlInterface,
-    Url,
-    NullScheme,
-    Authority,
-    Authority\UserInformation,
-    Authority\UserInformation\NullUser,
-    Authority\UserInformation\NullPassword,
-    Authority\NullHost,
-    Authority\NullPort,
-    NullFragment,
-};
-use Innmind\Immutable\SetInterface;
+use Innmind\Url\Url;
+use Innmind\Immutable\Set;
+use function Innmind\Immutable\join;
 
 final class Directives implements DirectivesInterface
 {
     private UserAgent $userAgent;
-    private SetInterface $allow;
-    private SetInterface $disallow;
+    private Set $allow;
+    private Set $disallow;
     private ?CrawlDelay $crawlDelay = null;
     private ?string $string = null;
 
     public function __construct(
         UserAgent $userAgent,
-        SetInterface $allow,
-        SetInterface $disallow,
+        Set $allow,
+        Set $disallow,
         CrawlDelay $crawlDelay = null
     ) {
         if ((string) $allow->type() !== Allow::class) {
             throw new \TypeError(sprintf(
-                'Argument 2 must be of type SetInterface<%s>',
+                'Argument 2 must be of type Set<%s>',
                 Allow::class
             ));
         }
 
         if ((string) $disallow->type() !== Disallow::class) {
             throw new \TypeError(sprintf(
-                'Argument 3 must be of type SetInterface<%s>',
+                'Argument 3 must be of type Set<%s>',
                 Disallow::class
             ));
         }
@@ -63,9 +53,9 @@ final class Directives implements DirectivesInterface
         return $this->userAgent->matches($userAgent);
     }
 
-    public function disallows(UrlInterface $url): bool
+    public function disallows(Url $url): bool
     {
-        $url = (string) $this->clean($url);
+        $url = $this->clean($url)->toString();
         $disallow = $this
             ->disallow
             ->reduce(
@@ -108,23 +98,21 @@ final class Directives implements DirectivesInterface
         $string = $this->userAgent->toString();
 
         if ($this->allow->size() > 0) {
-            $allow = \iterator_to_array($this->allow);
-            $allow = \array_map(
+            $allow = $this->allow->mapTo(
+                'string',
                 static fn(Allow $allow): string => $allow->toString(),
-                $allow,
             );
 
-            $string .= "\n".\implode("\n", $allow);
+            $string .= join("\n", $allow)->prepend("\n")->toString();
         }
 
         if ($this->disallow->size() > 0) {
-            $disallow = \iterator_to_array($this->disallow);
-            $disallow = \array_map(
+            $disallow = $this->disallow->mapTo(
+                'string',
                 static fn(Disallow $disallow): string => $disallow->toString(),
-                $disallow,
             );
 
-            $string .= "\n".\implode("\n", $disallow);
+            $string .= join("\n", $disallow)->prepend("\n")->toString();
         }
 
         if ($this->hasCrawlDelay()) {
@@ -150,21 +138,11 @@ final class Directives implements DirectivesInterface
             );
     }
 
-    private function clean(UrlInterface $url): UrlInterface
+    private function clean(Url $url): Url
     {
-        return new Url(
-            new NullScheme,
-            new Authority(
-                new UserInformation(
-                    new NullUser,
-                    new NullPassword
-                ),
-                new NullHost,
-                new NullPort
-            ),
-            $url->path(),
-            $url->query(),
-            new NullFragment
-        );
+        return $url
+            ->withoutScheme()
+            ->withoutAuthority()
+            ->withoutFragment();
     }
 }

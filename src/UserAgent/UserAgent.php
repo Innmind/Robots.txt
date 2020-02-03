@@ -21,7 +21,7 @@ final class UserAgent implements UserAgentInterface
         }
 
         $this->string = 'User-agent: '.$value;
-        $this->value = (string) Str::of($value)->toLower();
+        $this->value = Str::of($value)->toLower()->toString();
     }
 
     public function matches(string $userAgent): bool

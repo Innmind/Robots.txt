@@ -7,21 +7,22 @@ use Innmind\RobotsTxt\{
     RobotsTxt as RobotsTxtInterface,
     Directives,
 };
-use Innmind\Url\UrlInterface;
-use Innmind\Immutable\StreamInterface;
+use Innmind\Url\Url;
+use Innmind\Immutable\Sequence;
+use function Innmind\Immutable\join;
 
 final class RobotsTxt implements RobotsTxtInterface
 {
-    private UrlInterface $url;
-    private StreamInterface $directives;
+    private Url $url;
+    private Sequence $directives;
 
     public function __construct(
-        UrlInterface $url,
-        StreamInterface $directives
+        Url $url,
+        Sequence $directives
     ) {
         if ((string) $directives->type() !== Directives::class) {
             throw new \TypeError(sprintf(
-                'Argument 2 must be of type StreamInterface<%s>',
+                'Argument 2 must be of type Sequence<%s>',
                 Directives::class
             ));
         }
@@ -30,17 +31,17 @@ final class RobotsTxt implements RobotsTxtInterface
         $this->directives = $directives;
     }
 
-    public function url(): UrlInterface
+    public function url(): Url
     {
         return $this->url;
     }
 
-    public function directives(): StreamInterface
+    public function directives(): Sequence
     {
         return $this->directives;
     }
 
-    public function disallows(string $userAgent, UrlInterface $url): bool
+    public function disallows(string $userAgent, Url $url): bool
     {
         $directives = $this
             ->directives
@@ -66,12 +67,11 @@ final class RobotsTxt implements RobotsTxtInterface
 
     public function toString(): string
     {
-        $directives = $this->directives->toPrimitive();
-        $directives = \array_map(
+        $directives = $this->directives->mapTo(
+            'string',
             static fn(Directives $directives): string => $directives->toString(),
-            $directives,
         );
 
-        return (string) \implode("\n\n", $directives);
+        return join("\n\n", $directives)->toString();
     }
 }

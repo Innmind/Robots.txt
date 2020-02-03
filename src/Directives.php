@@ -3,12 +3,12 @@ declare(strict_types = 1);
 
 namespace Innmind\RobotsTxt;
 
-use Innmind\Url\UrlInterface;
+use Innmind\Url\Url;
 
 interface Directives
 {
     public function targets(string $userAgent): bool;
-    public function disallows(UrlInterface $url): bool;
+    public function disallows(Url $url): bool;
 
     /**
      * Delay in seconds

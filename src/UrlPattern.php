@@ -57,9 +57,10 @@ final class UrlPattern
             ->replace('\^', '^')
             ->replace('\$', '$')
             ->prepend('#')
-            ->append('#');
+            ->append('#')
+            ->toString();
 
-        return Str::of($url)->matches((string) $pattern);
+        return Str::of($url)->matches($pattern);
     }
 
     private function fallUnder(string $url): bool
