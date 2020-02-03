@@ -15,5 +15,5 @@ interface Directives
      */
     public function crawlDelay(): CrawlDelay;
     public function hasCrawlDelay(): bool;
-    public function __toString(): string;
+    public function toString(): string;
 }

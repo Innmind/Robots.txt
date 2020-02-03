@@ -23,8 +23,8 @@ final class CombinedUserAgent implements UserAgentInterface
         return $this->first->matches($userAgent) || $this->second->matches($userAgent);
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
-        return $this->first."\n".$this->second;
+        return $this->first->toString()."\n".$this->second->toString();
     }
 }

@@ -134,7 +134,7 @@ class DirectivesTest extends TestCase
 
         $this->assertSame(
             $expected,
-            (string) new Directives(
+            (new Directives(
                 new UserAgent\UserAgent('*'),
                 Set::of(
                     Allow::class,
@@ -147,7 +147,7 @@ class DirectivesTest extends TestCase
                     new Disallow(new UrlPattern('/'))
                 ),
                 new CrawlDelay(10)
-            )
+            ))->toString(),
         );
     }
 

@@ -64,8 +64,14 @@ final class RobotsTxt implements RobotsTxtInterface
         );
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
-        return (string) $this->directives->join("\n\n");
+        $directives = $this->directives->toPrimitive();
+        $directives = \array_map(
+            static fn(Directives $directives): string => $directives->toString(),
+            $directives,
+        );
+
+        return (string) \implode("\n\n", $directives);
     }
 }

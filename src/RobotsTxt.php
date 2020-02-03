@@ -15,5 +15,5 @@ interface RobotsTxt
      */
     public function directives(): StreamInterface;
     public function disallows(string $userAgent, UrlInterface $url): bool;
-    public function __toString(): string;
+    public function toString(): string;
 }

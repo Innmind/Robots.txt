@@ -23,7 +23,7 @@ final class CrawlDelay
         return $this->value;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return 'Crawl-delay: '.$this->value;
     }

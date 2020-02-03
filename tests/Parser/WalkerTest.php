@@ -48,11 +48,11 @@ TXT;
         $this->assertCount(2, $stream);
         $this->assertSame(
             $firstDirectives,
-            (string) $stream->first()
+            $stream->first()->toString(),
         );
         $this->assertSame(
             $secondDirectives,
-            (string) $stream->last()
+            $stream->last()->toString(),
         );
     }
 }

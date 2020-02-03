@@ -99,24 +99,36 @@ final class Directives implements DirectivesInterface
         return $this->crawlDelay instanceof CrawlDelay;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         if ($this->string !== null) {
             return $this->string;
         }
 
-        $string = (string) $this->userAgent;
+        $string = $this->userAgent->toString();
 
         if ($this->allow->size() > 0) {
-            $string .= "\n".$this->allow->join("\n");
+            $allow = \iterator_to_array($this->allow);
+            $allow = \array_map(
+                static fn(Allow $allow): string => $allow->toString(),
+                $allow,
+            );
+
+            $string .= "\n".\implode("\n", $allow);
         }
 
         if ($this->disallow->size() > 0) {
-            $string .= "\n".$this->disallow->join("\n");
+            $disallow = \iterator_to_array($this->disallow);
+            $disallow = \array_map(
+                static fn(Disallow $disallow): string => $disallow->toString(),
+                $disallow,
+            );
+
+            $string .= "\n".\implode("\n", $disallow);
         }
 
         if ($this->hasCrawlDelay()) {
-            $string .= "\n".$this->crawlDelay;
+            $string .= "\n".$this->crawlDelay->toString();
         }
 
         return $this->string = $string;

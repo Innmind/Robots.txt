@@ -133,13 +133,13 @@ class RobotsTxtTest extends TestCase
         );
         $mock1
             ->expects($this->once())
-            ->method('__toString')
+            ->method('toString')
             ->willReturn('foo');
         $mock2
             ->expects($this->once())
-            ->method('__toString')
+            ->method('toString')
             ->willReturn('bar');
 
-        $this->assertSame('foo'."\n\n".'bar', (string) $robots);
+        $this->assertSame('foo'."\n\n".'bar', $robots->toString());
     }
 }

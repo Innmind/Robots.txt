@@ -16,15 +16,15 @@ final class Disallow
 
     public function matches(string $url): bool
     {
-        if (Str::of((string) $this->pattern)->empty()) {
+        if (Str::of($this->pattern->toString())->empty()) {
             return false;
         }
 
         return $this->pattern->matches($url);
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
-        return 'Disallow: '.$this->pattern;
+        return 'Disallow: '.$this->pattern->toString();
     }
 }

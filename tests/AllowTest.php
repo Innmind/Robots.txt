@@ -23,7 +23,7 @@ class AllowTest extends TestCase
     {
         $this->assertSame(
             'Allow: *',
-            (string) new Allow(new UrlPattern('*'))
+            (new Allow(new UrlPattern('*')))->toString(),
         );
     }
 }

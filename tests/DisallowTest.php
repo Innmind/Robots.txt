@@ -31,7 +31,7 @@ class DisallowTest extends TestCase
     {
         $this->assertSame(
             'Disallow: *',
-            (string) new Disallow(new UrlPattern('*'))
+            (new Disallow(new UrlPattern('*')))->toString(),
         );
     }
 }

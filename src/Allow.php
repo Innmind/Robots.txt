@@ -17,8 +17,8 @@ final class Allow
         return $this->pattern->matches($url);
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
-        return 'Allow: '.$this->pattern;
+        return 'Allow: '.$this->pattern->toString();
     }
 }

@@ -98,7 +98,7 @@ TXT
 
         $this->assertInstanceOf(RobotsTxt::class, $robots);
         $this->assertSame($url, $robots->url());
-        $this->assertSame($expected, (string) $robots);
+        $this->assertSame($expected, $robots->toString());
     }
 
     public function testThrowWhenRequestNotFulfilled()
