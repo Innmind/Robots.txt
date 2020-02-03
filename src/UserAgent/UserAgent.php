@@ -11,8 +11,8 @@ use Innmind\Immutable\Str;
 
 final class UserAgent implements UserAgentInterface
 {
-    private $value;
-    private $string;
+    private string $value;
+    private string $string;
 
     public function __construct(string $value)
     {

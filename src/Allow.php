@@ -5,7 +5,7 @@ namespace Innmind\RobotsTxt;
 
 final class Allow
 {
-    private $pattern;
+    private UrlPattern $pattern;
 
     public function __construct(UrlPattern $pattern)
     {

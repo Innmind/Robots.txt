@@ -7,7 +7,7 @@ use Innmind\RobotsTxt\Exception\DomainException;
 
 final class CrawlDelay
 {
-    private $value;
+    private int $value;
 
     public function __construct(int $value)
     {

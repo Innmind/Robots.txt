@@ -12,8 +12,8 @@ use Innmind\Immutable\StreamInterface;
 
 final class RobotsTxt implements RobotsTxtInterface
 {
-    private $url;
-    private $directives;
+    private UrlInterface $url;
+    private StreamInterface $directives;
 
     public function __construct(
         UrlInterface $url,

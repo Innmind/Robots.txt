@@ -22,7 +22,7 @@ use Innmind\Immutable\{
 
 final class Walker
 {
-    private $supportedKeys;
+    private Set $supportedKeys;
 
     public function __construct()
     {

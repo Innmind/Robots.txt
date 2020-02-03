@@ -26,11 +26,11 @@ use Innmind\Immutable\SetInterface;
 
 final class Directives implements DirectivesInterface
 {
-    private $userAgent;
-    private $allow;
-    private $disallow;
-    private $crawlDelay;
-    private $string;
+    private UserAgent $userAgent;
+    private SetInterface $allow;
+    private SetInterface $disallow;
+    private ?CrawlDelay $crawlDelay = null;
+    private ?string $string = null;
 
     public function __construct(
         UserAgent $userAgent,

@@ -26,9 +26,9 @@ use Innmind\Immutable\{
 
 final class Parser implements ParserInterface
 {
-    private $transport;
-    private $walker;
-    private $userAgent;
+    private Transport $transport;
+    private Walker $walker;
+    private string $userAgent;
 
     public function __construct(
         Transport $transport,

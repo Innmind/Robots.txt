@@ -7,7 +7,7 @@ use Innmind\Immutable\Str;
 
 final class Disallow
 {
-    private $pattern;
+    private UrlPattern $pattern;
 
     public function __construct(UrlPattern $pattern)
     {

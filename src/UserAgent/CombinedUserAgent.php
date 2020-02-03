@@ -7,8 +7,8 @@ use Innmind\RobotsTxt\UserAgent as UserAgentInterface;
 
 final class CombinedUserAgent implements UserAgentInterface
 {
-    private $first;
-    private $second;
+    private UserAgentInterface $first;
+    private UserAgentInterface $second;
 
     public function __construct(
         UserAgentInterface $first,
