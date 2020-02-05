@@ -15,21 +15,18 @@ composer require innmind/robots-txt
 ## Usage
 
 ```php
-use Innmind\RobotsTxt\{
-    Parser,
-    Parser\Walker,
-};
-use Innmind\HttpTransport\Transport;
+use Innmind\RobotsTxt\Parser;
+use Innmind\OperatingSystem\Factory;
 use Innmind\Url\Url;
 
+$os = Factory::build();
 $parse = new Parser(
-    /* an instance of Transport */,
-    new Walker,
-    'My user agent'
+    $os->remote()->http(),
+    'My user agent',
 );
-$robots = $parse(Url::fromString('https://github.com/robots.txt'));
-$robots->disallows('My user agent', Url::fromString('/humans.txt')); //false
-$robots->disallows('My user agent', Url::fromString('/any/other/url')); //true
+$robots = $parse(Url::of('https://github.com/robots.txt'));
+$robots->disallows('My user agent', Url::of('/humans.txt')); //false
+$robots->disallows('My user agent', Url::of('/any/other/url')); //true
 ```
 
 **Note**: Here only the path `/humans.txt` is allowed because by default github disallows any user agent to crawl there website except for this file.
