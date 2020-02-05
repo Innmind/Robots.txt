@@ -64,14 +64,16 @@ final class Parser implements ParserInterface
             throw new FileNotFound($url->toString());
         }
 
-        $directives = ($this->walker)(Sequence::defer(
+        /** @var Sequence<Str> */
+        $lines = Sequence::defer(
             Str::class,
             (static function(Readable $robot): \Generator {
                 while (!$robot->end()) {
                     yield $robot->readLine();
                 }
             })($response->body()),
-        ));
+        );
+        $directives = ($this->walker)($lines);
 
         return new RobotsTxt\RobotsTxt(
             $url,

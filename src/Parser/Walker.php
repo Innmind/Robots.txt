@@ -10,6 +10,7 @@ use Innmind\RobotsTxt\{
     UrlPattern,
     CrawlDelay,
     Directives,
+    Exception\LogicException,
 };
 use Innmind\Immutable\{
     Str,
@@ -41,6 +42,7 @@ final class Walker
      */
     public function __invoke(Sequence $lines): Sequence
     {
+        /** @var Sequence<Directives> */
         return $lines
             ->map(static function(Str $line): Str {
                 return $line
@@ -79,12 +81,17 @@ final class Walker
                 // of the sequence here but continue deferring the parsing
                 Sequence::of(UserAgent::class.'|'.Allow::class.'|'.Disallow::class.'|'.CrawlDelay::class),
                 function(Sequence $directives, object $directive): Sequence {
+                    /** @var Sequence<UserAgent|Allow|Disallow|CrawlDelay> $directives */
                     return $this->groupUserAgents($directives, $directive);
                 },
             )
             ->reduce(
                 Sequence::of(Directives\Directives::class),
                 function(Sequence $directives, object $directive): Sequence {
+                    /**
+                     * @var UserAgent|Allow|Disallow|CrawlDelay $directive
+                     * @var Sequence<Directives\Directives> $directives
+                     */
                     return $this->groupDirectives($directives, $directive);
                 },
             )
@@ -120,6 +127,8 @@ final class Walker
             case 'crawl-delay':
                 return new CrawlDelay((int) $directive->value()->toString());
         }
+
+        throw new LogicException("Unknown directive '{$directive->key()->toString()}'");
     }
 
     /**

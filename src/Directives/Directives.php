@@ -99,10 +99,11 @@ final class Directives implements DirectivesInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress InvalidNullableReturnType
      */
     public function crawlDelay(): CrawlDelay
     {
+        /** @psalm-suppress NullableReturnStatement */
         return $this->crawlDelay;
     }
 
@@ -137,7 +138,7 @@ final class Directives implements DirectivesInterface
             $string .= join("\n", $disallow)->prepend("\n")->toString();
         }
 
-        if ($this->hasCrawlDelay()) {
+        if ($this->crawlDelay) {
             $string .= "\n".$this->crawlDelay->toString();
         }
 

@@ -17,12 +17,14 @@ use function Innmind\Immutable\{
 final class RobotsTxt implements RobotsTxtInterface
 {
     private Url $url;
+    /** @var Sequence<Directives> */
     private Sequence $directives;
 
-    public function __construct(
-        Url $url,
-        Sequence $directives
-    ) {
+    /**
+     * @param Sequence<Directives> $directives
+     */
+    public function __construct(Url $url, Sequence $directives)
+    {
         assertSequence(Directives::class, $directives, 2);
 
         $this->url = $url;
