@@ -151,6 +151,69 @@ class DirectivesTest extends TestCase
         );
     }
 
+    public function testWithAllow()
+    {
+        $directives = new Directives(
+            new UserAgent\UserAgent('*'),
+            Set::of(Allow::class),
+            Set::of(Disallow::class),
+        );
+        $directives2 = $directives->withAllow(new Allow(new UrlPattern('/foo')));
+
+        $this->assertInstanceOf(Directives::class, $directives2);
+        $this->assertNotSame($directives, $directives2);
+        $this->assertSame(
+            "User-agent: *",
+            $directives->toString(),
+        );
+        $this->assertSame(
+            "User-agent: *\nAllow: /foo",
+            $directives2->toString(),
+        );
+    }
+
+    public function testWithDisallow()
+    {
+        $directives = new Directives(
+            new UserAgent\UserAgent('*'),
+            Set::of(Allow::class),
+            Set::of(Disallow::class),
+        );
+        $directives2 = $directives->withDisallow(new Disallow(new UrlPattern('/foo')));
+
+        $this->assertInstanceOf(Directives::class, $directives2);
+        $this->assertNotSame($directives, $directives2);
+        $this->assertSame(
+            "User-agent: *",
+            $directives->toString(),
+        );
+        $this->assertSame(
+            "User-agent: *\nDisallow: /foo",
+            $directives2->toString(),
+        );
+    }
+
+    public function testWithCrawlDelay()
+    {
+        $directives = new Directives(
+            new UserAgent\UserAgent('*'),
+            Set::of(Allow::class),
+            Set::of(Disallow::class),
+        );
+        $directives2 = $directives->withCrawlDelay(new CrawlDelay(42));
+
+        $this->assertInstanceOf(Directives::class, $directives2);
+        $this->assertNotSame($directives, $directives2);
+        $this->assertSame(
+            "User-agent: *",
+            $directives->toString(),
+        );
+        $this->assertSame(
+            "User-agent: *\nCrawl-delay: 42",
+            $directives2->toString(),
+        );
+    }
+
     /**
      * @see https://developers.google.com/webmasters/control-crawl-index/docs/robots_txt#order-of-precedence-for-group-member-records
      */

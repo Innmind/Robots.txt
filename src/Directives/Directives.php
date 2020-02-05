@@ -40,6 +40,36 @@ final class Directives implements DirectivesInterface
         $this->crawlDelay = $crawlDelay;
     }
 
+    public function withAllow(Allow $allow): self
+    {
+        return new self(
+            $this->userAgent,
+            ($this->allow)($allow),
+            $this->disallow,
+            $this->crawlDelay,
+        );
+    }
+
+    public function withDisallow(Disallow $disallow): self
+    {
+        return new self(
+            $this->userAgent,
+            $this->allow,
+            ($this->disallow)($disallow),
+            $this->crawlDelay,
+        );
+    }
+
+    public function withCrawlDelay(CrawlDelay $crawlDelay): self
+    {
+        return new self(
+            $this->userAgent,
+            $this->allow,
+            $this->disallow,
+            $crawlDelay,
+        );
+    }
+
     public function targets(string $userAgent): bool
     {
         return $this->userAgent->matches($userAgent);

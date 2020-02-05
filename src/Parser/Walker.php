@@ -83,20 +83,15 @@ final class Walker
                 },
             )
             ->reduce(
-                Sequence::of(Map::class),
+                Sequence::of(Directives\Directives::class),
                 function(Sequence $directives, object $directive): Sequence {
                     return $this->groupDirectives($directives, $directive);
                 },
             )
             ->mapTo(
-                Directives::class,
-                static function(Map $directive): Directives {
-                    return new Directives\Directives(
-                        $directive->get('user-agent'),
-                        $directive->get('allow'),
-                        $directive->get('disallow'),
-                        $directive->contains('crawl-delay') ? $directive->get('crawl-delay') : null,
-                    );
+                Directives::class, // simply a type change to the sequence here
+                static function(Directives\Directives $directives): Directives {
+                    return $directives;
                 },
             );
     }
@@ -159,48 +154,46 @@ final class Walker
     }
 
     /**
-     * @param Sequence<Map<string, object>> $directives
+     * @param Sequence<Directives\Directives> $directives
      * @param UserAgent|Allow|Disallow|CrawlDelay $directive
      *
-     * @return Sequence<Map<string, object>>
+     * @return Sequence<Directives\Directives>
      */
     private function groupDirectives(Sequence $directives, object $directive): Sequence {
         if ($directive instanceof UserAgent) {
             return ($directives)(
-                Map::of('string', 'object')
-                    ('user-agent', $directive)
-                    ('allow', Set::of(Allow::class))
-                    ('disallow', Set::of(Disallow::class))
+                new Directives\Directives(
+                    $directive,
+                    Set::of(Allow::class),
+                    Set::of(Disallow::class),
+                ),
             );
         }
 
+        // means we don't take into account any directive not specified under a
+        // user-agent
         if ($directives->empty()) {
             return $directives;
         }
 
-        $last = $directives->last();
+        $currentDirectives = $directives->last();
 
         switch (true) {
             case $directive instanceof Allow:
-                $last = ($last)(
-                    'allow',
-                    $last->get('allow')->add($directive),
-                );
+                $currentDirectives = $currentDirectives->withAllow($directive);
                 break;
 
             case $directive instanceof Disallow:
-                $last = ($last)(
-                    'disallow',
-                    $last->get('disallow')->add($directive),
-                );
+                $currentDirectives = $currentDirectives->withDisallow($directive);
                 break;
 
             case $directive instanceof CrawlDelay:
-                $last = ($last)('crawl-delay', $directive);
+                $currentDirectives = $currentDirectives->withCrawlDelay($directive);
+                break;
         }
 
         return $directives
             ->dropEnd(1)
-            ->add($last);
+            ->add($currentDirectives);
     }
 }
