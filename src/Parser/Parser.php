@@ -61,7 +61,7 @@ final class Parser implements ParserInterface
         );
 
         if ($response->statusCode()->value() !== StatusCode::codes()->get('OK')) {
-            throw new FileNotFound;
+            throw new FileNotFound($url->toString());
         }
 
         $directives = ($this->walker)(Sequence::defer(
