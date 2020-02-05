@@ -22,7 +22,7 @@ class CrawlDelayTest extends TestCase
     {
         $this->assertSame(
             'Crawl-delay: 10',
-            (string) new CrawlDelay(10)
+            (new CrawlDelay(10))->toString(),
         );
     }
 

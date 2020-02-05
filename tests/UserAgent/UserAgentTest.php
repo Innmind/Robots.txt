@@ -42,7 +42,7 @@ class UserAgentTest extends TestCase
     {
         $this->assertSame(
             'User-agent: GoogleBot',
-            (string) new UserAgent('GoogleBot')
+            (new UserAgent('GoogleBot'))->toString(),
         );
     }
 

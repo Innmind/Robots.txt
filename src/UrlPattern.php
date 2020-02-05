@@ -11,7 +11,7 @@ use Innmind\Immutable\{
 
 final class UrlPattern
 {
-    private $pattern;
+    private string $pattern;
 
     public function __construct(string $pattern)
     {
@@ -41,7 +41,7 @@ final class UrlPattern
         }
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->pattern;
     }
@@ -57,9 +57,10 @@ final class UrlPattern
             ->replace('\^', '^')
             ->replace('\$', '$')
             ->prepend('#')
-            ->append('#');
+            ->append('#')
+            ->toString();
 
-        return Str::of($url)->matches((string) $pattern);
+        return Str::of($url)->matches($pattern);
     }
 
     private function fallUnder(string $url): bool

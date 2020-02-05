@@ -7,12 +7,12 @@ use Innmind\RobotsTxt\Exception\DomainException;
 
 final class CrawlDelay
 {
-    private $value;
+    private int $value;
 
     public function __construct(int $value)
     {
         if ($value < 0) {
-            throw new DomainException;
+            throw new DomainException((string) $value);
         }
 
         $this->value = $value;
@@ -23,7 +23,7 @@ final class CrawlDelay
         return $this->value;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return 'Crawl-delay: '.$this->value;
     }

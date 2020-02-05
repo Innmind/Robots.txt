@@ -10,204 +10,199 @@ use Innmind\RobotsTxt\{
     UrlPattern,
     CrawlDelay,
     Directives,
+    Exception\LogicException,
 };
 use Innmind\Immutable\{
     Str,
-    StreamInterface,
-    Stream,
+    Sequence,
     Set,
     Pair,
     Map,
 };
+use function Innmind\Immutable\join;
 
 final class Walker
 {
-    private $supportedKeys;
+    private Set $supportedKeys;
 
     public function __construct()
     {
-        $this->supportedKeys = Set::of(
-            'string',
+        $this->supportedKeys = Set::strings(
             'user-agent',
             'allow',
             'disallow',
-            'crawl-delay'
+            'crawl-delay',
         );
     }
 
     /**
-     * @return StreamInterface<Directives>
+     * @param Sequence<Str> $lines
+     *
+     * @return Sequence<Directives>
      */
-    public function __invoke(Str $robots): StreamInterface
+    public function __invoke(Sequence $lines): Sequence
     {
-        return $robots
-            ->split("\n")
+        /** @var Sequence<Directives> */
+        return $lines
             ->map(static function(Str $line): Str {
                 return $line
                     ->pregReplace('/ #.*/', '')
                     ->trim();
             })
-            ->filter(static function(Str $line): bool {
-                return $line->length() > 0;
-            })
-            ->filter(static function(Str $line): bool {
-                return $line->split(':')->size() >= 2;
-            })
-            ->reduce(
-                new Stream(Pair::class),
-                static function(Stream $carry, Str $line): Stream {
+            ->filter(static fn(Str $line): bool => !$line->empty())
+            ->filter(static fn(Str $line): bool => $line->split(':')->size() >= 2)
+            ->mapTo(
+                Pair::class,
+                static function(Str $line): Pair {
                     $parts = $line->split(':');
 
-                    return $carry->add(
-                        new Pair(
-                            $parts->first()->toLower()->trim(),
-                            $parts->drop(1)->join(':')->trim()
-                        )
+                    $directive = $parts->drop(1)->mapTo(
+                        'string',
+                        static fn(Str $part): string => $part->toString(),
                     );
-                }
+
+                    return new Pair(
+                        $parts->first()->toLower()->trim(),
+                        join(':', $directive)->trim(),
+                    );
+                },
             )
             ->filter(function(Pair $line): bool {
-                return $this->supportedKeys->contains((string) $line->key());
+                return $this->supportedKeys->contains($line->key()->toString());
             })
-            ->reduce(
-                new Stream('object'),
-                function(Stream $carry, Pair $line): Stream {
-                    return $this->transformLineToObject($carry, $line);
-                }
+            ->mapTo(
+                UserAgent::class.'|'.Allow::class.'|'.Disallow::class.'|'.CrawlDelay::class,
+                function(Pair $directive): object {
+                    return $this->transformLineToObject($directive);
+                },
             )
             ->reduce(
-                new Stream('object'),
-                function(Stream $carry, $object): Stream {
-                    return $this->groupUserAgents($carry, $object);
-                }
+                // it would be nice to find a way not to unwrap the whole content
+                // of the sequence here but continue deferring the parsing
+                Sequence::of(UserAgent::class.'|'.Allow::class.'|'.Disallow::class.'|'.CrawlDelay::class),
+                function(Sequence $directives, object $directive): Sequence {
+                    /** @var Sequence<UserAgent|Allow|Disallow|CrawlDelay> $directives */
+                    return $this->groupUserAgents($directives, $directive);
+                },
             )
             ->reduce(
-                new Stream(Map::class),
-                function(Stream $carry, $object): Stream {
-                    return $this->groupDirectives($carry, $object);
-                }
+                Sequence::of(Directives\Directives::class),
+                function(Sequence $directives, object $directive): Sequence {
+                    /**
+                     * @var UserAgent|Allow|Disallow|CrawlDelay $directive
+                     * @var Sequence<Directives\Directives> $directives
+                     */
+                    return $this->groupDirectives($directives, $directive);
+                },
             )
-            ->reduce(
-                new Stream(Directives::class),
-                static function(Stream $carry, Map $map): Stream {
-                    return $carry->add(
-                        new Directives\Directives(
-                            $map->get('user-agent'),
-                            $map->get('allow'),
-                            $map->get('disallow'),
-                            $map['crawl-delay'] ?? null
-                        )
-                    );
-                }
+            ->mapTo(
+                Directives::class, // simply a type change to the sequence here
+                static function(Directives\Directives $directives): Directives {
+                    return $directives;
+                },
             );
     }
 
     /**
-     * @param Stream<object> $carry
-     * @param Pair<Str, Str> $line
-     * @return Stream<object>
+     * @param Pair<Str, Str> $directive
+     *
+     * @return UserAgent|Allow|Disallow|CrawlDelay
      */
-    private function transformLineToObject(Stream $carry, Pair $line): Stream {
-        switch ((string) $line->key()) {
+    private function transformLineToObject(Pair $directive): object
+    {
+        switch ($directive->key()->toString()) {
             case 'user-agent':
-                return $carry->add(
-                    new UserAgent\UserAgent((string) $line->value())
-                );
+                return new UserAgent\UserAgent($directive->value()->toString());
 
             case 'allow':
-                return $carry->add(
-                    new Allow(
-                        new UrlPattern((string) $line->value())
-                    )
+                return new Allow(
+                    new UrlPattern($directive->value()->toString()),
                 );
 
             case 'disallow':
-                return $carry->add(
-                    new Disallow(
-                        new UrlPattern((string) $line->value())
-                    )
+                return new Disallow(
+                    new UrlPattern($directive->value()->toString()),
                 );
 
             case 'crawl-delay':
-                return $carry->add(
-                    new CrawlDelay((int) (string) $line->value())
-                );
+                return new CrawlDelay((int) $directive->value()->toString());
         }
+
+        throw new LogicException("Unknown directive '{$directive->key()->toString()}'");
     }
 
     /**
-     * @param Stream<object> $carry
-     * @param object $object
+     * @param Sequence<UserAgent|Allow|Disallow|CrawlDelay> $directives
+     * @param UserAgent|Allow|Disallow|CrawlDelay $directive
      *
-     * @return Stream<object>
+     * @return Sequence<UserAgent|Allow|Disallow|CrawlDelay>
      */
-    private function groupUserAgents(Stream $carry, $object): Stream {
-        if ($carry->size() === 0) {
-            return $carry->add($object);
+    private function groupUserAgents(Sequence $directives, object $directive): Sequence
+    {
+        if ($directives->empty()) {
+            return ($directives)($directive);
         }
 
-        $last = $carry->last();
+        $last = $directives->last();
 
         if (
             !$last instanceof UserAgent ||
-            !$object instanceof UserAgent
+            !$directive instanceof UserAgent
         ) {
-            return $carry->add($object);
+            return ($directives)($directive);
         }
 
-        return $carry
+        return $directives
             ->dropEnd(1)
             ->add(
                 new UserAgent\CombinedUserAgent(
                     $last,
-                    $object
-                )
+                    $directive,
+                ),
             );
     }
 
     /**
-     * @param Stream<Map<string, object>> $carry
-     * @param object $object
+     * @param Sequence<Directives\Directives> $directives
+     * @param UserAgent|Allow|Disallow|CrawlDelay $directive
      *
-     * @return Stream<Map<string, string>>
+     * @return Sequence<Directives\Directives>
      */
-    private function groupDirectives(Stream $carry, $object): Stream {
-        if ($object instanceof UserAgent) {
-            return $carry->add(
-                Map::of('string', 'object')
-                    ('user-agent', $object)
-                    ('allow', new Set(Allow::class))
-                    ('disallow', new Set(Disallow::class))
+    private function groupDirectives(Sequence $directives, object $directive): Sequence {
+        if ($directive instanceof UserAgent) {
+            return ($directives)(
+                new Directives\Directives(
+                    $directive,
+                    Set::of(Allow::class),
+                    Set::of(Disallow::class),
+                ),
             );
         }
 
-        if ($carry->size() === 0) {
-            return $carry;
+        // means we don't take into account any directive not specified under a
+        // user-agent
+        if ($directives->empty()) {
+            return $directives;
         }
 
-        $last = $carry->last();
+        $currentDirectives = $directives->last();
 
         switch (true) {
-            case $object instanceof Allow:
-                $last = $last->put(
-                    'allow',
-                    $last->get('allow')->add($object)
-                );
+            case $directive instanceof Allow:
+                $currentDirectives = $currentDirectives->withAllow($directive);
                 break;
 
-            case $object instanceof Disallow:
-                $last = $last->put(
-                    'disallow',
-                    $last->get('disallow')->add($object)
-                );
+            case $directive instanceof Disallow:
+                $currentDirectives = $currentDirectives->withDisallow($directive);
                 break;
 
-            case $object instanceof CrawlDelay:
-                $last = $last->put('crawl-delay', $object);
+            case $directive instanceof CrawlDelay:
+                $currentDirectives = $currentDirectives->withCrawlDelay($directive);
+                break;
         }
 
-        return $carry
+        return $directives
             ->dropEnd(1)
-            ->add($last);
+            ->add($currentDirectives);
     }
 }

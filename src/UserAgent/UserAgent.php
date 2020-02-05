@@ -11,8 +11,8 @@ use Innmind\Immutable\Str;
 
 final class UserAgent implements UserAgentInterface
 {
-    private $value;
-    private $string;
+    private string $value;
+    private string $string;
 
     public function __construct(string $value)
     {
@@ -21,7 +21,7 @@ final class UserAgent implements UserAgentInterface
         }
 
         $this->string = 'User-agent: '.$value;
-        $this->value = (string) Str::of($value)->toLower();
+        $this->value = Str::of($value)->toLower()->toString();
     }
 
     public function matches(string $userAgent): bool
@@ -35,7 +35,7 @@ final class UserAgent implements UserAgentInterface
             ->contains($this->value);
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->string;
     }

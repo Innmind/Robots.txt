@@ -11,13 +11,14 @@ use Innmind\RobotsTxt\{
     Exception\FileNotFound,
 };
 use Innmind\HttpTransport\Transport;
-use Innmind\Url\UrlInterface;
+use Innmind\Url\Url;
 use Innmind\Http\Message\{
     Request\Request,
-    StatusCode\StatusCode,
+    StatusCode,
     Response,
 };
 use Innmind\Stream\Readable;
+use Innmind\Immutable\Str;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
@@ -28,7 +29,6 @@ class ParserTest extends TestCase
             ParserInterface::class,
             new Parser(
                 $this->createMock(Transport::class),
-                new Walker,
                 'foo'
             )
         );
@@ -38,21 +38,20 @@ class ParserTest extends TestCase
     {
         $parse = new Parser(
             $transport = $this->createMock(Transport::class),
-            new Walker,
             'InnmindCrawler'
         );
-        $url = $this->createMock(UrlInterface::class);
+        $url = Url::of('http://example.com');
         $transport
             ->expects($this->once())
             ->method('__invoke')
             ->with($this->callback(function(Request $request) use ($url): bool {
                 return $request->url() === $url &&
-                    (string) $request->method() === 'GET' &&
-                    (string) $request->protocolVersion() === '2.0' &&
+                    $request->method()->toString() === 'GET' &&
+                    $request->protocolVersion()->toString() === '2.0' &&
                     $request->headers()->count() === 1 &&
-                    $request->headers()->has('user-agent') &&
-                    (string) $request->headers()->get('user-agent') === 'User-Agent: InnmindCrawler' &&
-                    (string) $request->body() === '';
+                    $request->headers()->contains('user-agent') &&
+                    $request->headers()->get('user-agent')->toString() === 'User-Agent: InnmindCrawler' &&
+                    $request->body()->toString() === '';
             }))
             ->willReturn(
                 $response = $this->createMock(Response::class)
@@ -65,12 +64,7 @@ class ParserTest extends TestCase
             ->expects($this->once())
             ->method('body')
             ->willReturn(
-                $stream = $this->createMock(Readable::class)
-            );
-        $stream
-            ->expects($this->once())
-            ->method('__toString')
-            ->willReturn(<<<TXT
+                Readable\Stream::ofContent(<<<TXT
 Sitemap : foo.xml
 Host : example.com
 Crawl-delay: 10
@@ -84,6 +78,7 @@ Disallow :
 Crawl-delay : 10
 Crawl-delay : 20
 TXT
+                ),
             );
         $expected = 'User-agent: Foo'."\n";
         $expected .= 'User-agent: Bar'."\n";
@@ -98,17 +93,16 @@ TXT
 
         $this->assertInstanceOf(RobotsTxt::class, $robots);
         $this->assertSame($url, $robots->url());
-        $this->assertSame($expected, (string) $robots);
+        $this->assertSame($expected, $robots->toString());
     }
 
     public function testThrowWhenRequestNotFulfilled()
     {
         $parse = new Parser(
             $transport = $this->createMock(Transport::class),
-            new Walker,
             'InnmindCrawler'
         );
-        $url = $this->createMock(UrlInterface::class);
+        $url = Url::of('http://example.com');
         $transport
             ->expects($this->once())
             ->method('__invoke')

@@ -9,7 +9,8 @@ use Innmind\RobotsTxt\{
 };
 use Innmind\Immutable\{
     Str,
-    StreamInterface,
+    Sequence,
+    Set,
 };
 use PHPUnit\Framework\TestCase;
 
@@ -41,18 +42,18 @@ TXT;
         $secondDirectives .= 'Disallow: '."\n";
         $secondDirectives .= 'Crawl-delay: 20';
 
-        $stream = (new Walker)(new Str($robots));
+        $stream = (new Walker)(Str::of($robots)->split("\n"));
 
-        $this->assertInstanceOf(StreamInterface::class, $stream);
+        $this->assertInstanceOf(Sequence::class, $stream);
         $this->assertSame(Directives::class, (string) $stream->type());
         $this->assertCount(2, $stream);
         $this->assertSame(
             $firstDirectives,
-            (string) $stream->first()
+            $stream->first()->toString(),
         );
         $this->assertSame(
             $secondDirectives,
-            (string) $stream->last()
+            $stream->last()->toString(),
         );
     }
 }

@@ -10,47 +10,32 @@ use Innmind\RobotsTxt\{
     UserAgent,
     CrawlDelay,
 };
-use Innmind\Url\{
-    UrlInterface,
-    Url,
-    NullScheme,
-    Authority,
-    Authority\UserInformation,
-    Authority\UserInformation\NullUser,
-    Authority\UserInformation\NullPassword,
-    Authority\NullHost,
-    Authority\NullPort,
-    NullFragment,
+use Innmind\Url\Url;
+use Innmind\Immutable\{
+    Set,
+    Exception\NoElementMatchingPredicateFound,
 };
-use Innmind\Immutable\SetInterface;
+use function Innmind\Immutable\{
+    assertSet,
+    join,
+};
 
 final class Directives implements DirectivesInterface
 {
-    private $userAgent;
-    private $allow;
-    private $disallow;
-    private $crawlDelay;
-    private $string;
+    private UserAgent $userAgent;
+    private Set $allow;
+    private Set $disallow;
+    private ?CrawlDelay $crawlDelay = null;
+    private ?string $string = null;
 
     public function __construct(
         UserAgent $userAgent,
-        SetInterface $allow,
-        SetInterface $disallow,
+        Set $allow,
+        Set $disallow,
         CrawlDelay $crawlDelay = null
     ) {
-        if ((string) $allow->type() !== Allow::class) {
-            throw new \TypeError(sprintf(
-                'Argument 2 must be of type SetInterface<%s>',
-                Allow::class
-            ));
-        }
-
-        if ((string) $disallow->type() !== Disallow::class) {
-            throw new \TypeError(sprintf(
-                'Argument 3 must be of type SetInterface<%s>',
-                Disallow::class
-            ));
-        }
+        assertSet(Allow::class, $allow, 2);
+        assertSet(Disallow::class, $disallow, 3);
 
         $this->userAgent = $userAgent;
         $this->allow = $allow;
@@ -58,39 +43,64 @@ final class Directives implements DirectivesInterface
         $this->crawlDelay = $crawlDelay;
     }
 
+    public function withAllow(Allow $allow): self
+    {
+        return new self(
+            $this->userAgent,
+            ($this->allow)($allow),
+            $this->disallow,
+            $this->crawlDelay,
+        );
+    }
+
+    public function withDisallow(Disallow $disallow): self
+    {
+        return new self(
+            $this->userAgent,
+            $this->allow,
+            ($this->disallow)($disallow),
+            $this->crawlDelay,
+        );
+    }
+
+    public function withCrawlDelay(CrawlDelay $crawlDelay): self
+    {
+        return new self(
+            $this->userAgent,
+            $this->allow,
+            $this->disallow,
+            $crawlDelay,
+        );
+    }
+
     public function targets(string $userAgent): bool
     {
         return $this->userAgent->matches($userAgent);
     }
 
-    public function disallows(UrlInterface $url): bool
+    public function disallows(Url $url): bool
     {
-        $url = (string) $this->clean($url);
-        $disallow = $this
-            ->disallow
-            ->reduce(
-                false,
-                function(bool $carry, Disallow $disallow) use ($url): bool {
-                    if ($carry === true) {
-                        return $carry;
-                    }
+        $url = $this->clean($url)->toString();
 
-                    return $disallow->matches($url);
-                }
+        try {
+            $this->disallow->find(
+                static fn(Disallow $disallow): bool => $disallow->matches($url),
             );
 
-        if ($disallow === false) {
+            // if a disallow directive is found and the url is not explicitly
+            // allowed then the url is considered disallowed
+            return !$this->allows($url);
+        } catch (NoElementMatchingPredicateFound $e) {
             return false;
         }
-
-        return !$this->allows($url);
     }
 
     /**
-     * {@inheritdoc}
+     * @psalm-suppress InvalidNullableReturnType
      */
     public function crawlDelay(): CrawlDelay
     {
+        /** @psalm-suppress NullableReturnStatement */
         return $this->crawlDelay;
     }
 
@@ -99,24 +109,34 @@ final class Directives implements DirectivesInterface
         return $this->crawlDelay instanceof CrawlDelay;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         if ($this->string !== null) {
             return $this->string;
         }
 
-        $string = (string) $this->userAgent;
+        $string = $this->userAgent->toString();
 
         if ($this->allow->size() > 0) {
-            $string .= "\n".$this->allow->join("\n");
+            $allow = $this->allow->mapTo(
+                'string',
+                static fn(Allow $allow): string => $allow->toString(),
+            );
+
+            $string .= join("\n", $allow)->prepend("\n")->toString();
         }
 
         if ($this->disallow->size() > 0) {
-            $string .= "\n".$this->disallow->join("\n");
+            $disallow = $this->disallow->mapTo(
+                'string',
+                static fn(Disallow $disallow): string => $disallow->toString(),
+            );
+
+            $string .= join("\n", $disallow)->prepend("\n")->toString();
         }
 
-        if ($this->hasCrawlDelay()) {
-            $string .= "\n".$this->crawlDelay;
+        if ($this->crawlDelay) {
+            $string .= "\n".$this->crawlDelay->toString();
         }
 
         return $this->string = $string;
@@ -124,35 +144,22 @@ final class Directives implements DirectivesInterface
 
     private function allows(string $url): bool
     {
-        return $this
-            ->allow
-            ->reduce(
-                false,
-                function(bool $carry, Allow $allow) use ($url): bool {
-                    if ($carry === true) {
-                        return $carry;
-                    }
-
-                    return $allow->matches($url);
-                }
+        try {
+            $this->allow->find(
+                static fn(Allow $allow): bool => $allow->matches($url),
             );
+
+            return true;
+        } catch (NoElementMatchingPredicateFound $e) {
+            return false;
+        }
     }
 
-    private function clean(UrlInterface $url): UrlInterface
+    private function clean(Url $url): Url
     {
-        return new Url(
-            new NullScheme,
-            new Authority(
-                new UserInformation(
-                    new NullUser,
-                    new NullPassword
-                ),
-                new NullHost,
-                new NullPort
-            ),
-            $url->path(),
-            $url->query(),
-            new NullFragment
-        );
+        return $url
+            ->withoutScheme()
+            ->withoutAuthority()
+            ->withoutFragment();
     }
 }

@@ -7,8 +7,8 @@ use Innmind\RobotsTxt\UserAgent as UserAgentInterface;
 
 final class CombinedUserAgent implements UserAgentInterface
 {
-    private $first;
-    private $second;
+    private UserAgentInterface $first;
+    private UserAgentInterface $second;
 
     public function __construct(
         UserAgentInterface $first,
@@ -23,8 +23,8 @@ final class CombinedUserAgent implements UserAgentInterface
         return $this->first->matches($userAgent) || $this->second->matches($userAgent);
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
-        return $this->first."\n".$this->second;
+        return $this->first->toString()."\n".$this->second->toString();
     }
 }

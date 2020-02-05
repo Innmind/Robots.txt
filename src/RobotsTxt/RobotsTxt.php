@@ -7,40 +7,44 @@ use Innmind\RobotsTxt\{
     RobotsTxt as RobotsTxtInterface,
     Directives,
 };
-use Innmind\Url\UrlInterface;
-use Innmind\Immutable\StreamInterface;
+use Innmind\Url\Url;
+use Innmind\Immutable\{
+    Sequence,
+    Exception\NoElementMatchingPredicateFound,
+};
+use function Innmind\Immutable\{
+    assertSequence,
+    join,
+};
 
 final class RobotsTxt implements RobotsTxtInterface
 {
-    private $url;
-    private $directives;
+    private Url $url;
+    /** @var Sequence<Directives> */
+    private Sequence $directives;
 
-    public function __construct(
-        UrlInterface $url,
-        StreamInterface $directives
-    ) {
-        if ((string) $directives->type() !== Directives::class) {
-            throw new \TypeError(sprintf(
-                'Argument 2 must be of type StreamInterface<%s>',
-                Directives::class
-            ));
-        }
+    /**
+     * @param Sequence<Directives> $directives
+     */
+    public function __construct(Url $url, Sequence $directives)
+    {
+        assertSequence(Directives::class, $directives, 2);
 
         $this->url = $url;
         $this->directives = $directives;
     }
 
-    public function url(): UrlInterface
+    public function url(): Url
     {
         return $this->url;
     }
 
-    public function directives(): StreamInterface
+    public function directives(): Sequence
     {
         return $this->directives;
     }
 
-    public function disallows(string $userAgent, UrlInterface $url): bool
+    public function disallows(string $userAgent, Url $url): bool
     {
         $directives = $this
             ->directives
@@ -48,24 +52,28 @@ final class RobotsTxt implements RobotsTxtInterface
                 return $directives->targets($userAgent);
             });
 
-        if ($directives->size() === 0) {
+        if ($directives->empty()) {
             return false;
         }
 
-        return $directives->reduce(
-            false,
-            static function(bool $carry, Directives $directives) use ($url): bool {
-                if ($carry === true) {
-                    return $carry;
-                }
+        try {
+            $directives->find(
+                static fn(Directives $directives): bool => $directives->disallows($url),
+            );
 
-                return $directives->disallows($url);
-            }
-        );
+            return true;
+        } catch (NoElementMatchingPredicateFound $e) {
+            return false;
+        }
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
-        return (string) $this->directives->join("\n\n");
+        $directives = $this->directives->mapTo(
+            'string',
+            static fn(Directives $directives): string => $directives->toString(),
+        );
+
+        return join("\n\n", $directives)->toString();
     }
 }

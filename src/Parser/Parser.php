@@ -9,43 +9,43 @@ use Innmind\RobotsTxt\{
     Exception\FileNotFound,
 };
 use Innmind\HttpTransport\Transport;
-use Innmind\Url\UrlInterface;
+use Innmind\Url\Url;
 use Innmind\Http\{
     Message\Request\Request,
-    Message\Method\Method,
-    Message\StatusCode\StatusCode,
-    ProtocolVersion\ProtocolVersion,
-    Headers\Headers,
+    Message\Method,
+    Message\StatusCode,
+    ProtocolVersion,
+    Headers,
     Header,
     Header\Value\Value,
 };
+use Innmind\Stream\Readable;
 use Innmind\Immutable\{
-    Map,
+    Sequence,
     Str,
 };
 
 final class Parser implements ParserInterface
 {
-    private $transport;
-    private $walker;
-    private $userAgent;
+    private Transport $fulfill;
+    private Walker $walker;
+    private string $userAgent;
 
     public function __construct(
-        Transport $transport,
-        Walker $walker,
+        Transport $fulfill,
         string $userAgent
     ) {
-        $this->transport = $transport;
-        $this->walker = $walker;
+        $this->fulfill = $fulfill;
+        $this->walker = new Walker;
         $this->userAgent = $userAgent;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function __invoke(UrlInterface $url): RobotsTxt
+    public function __invoke(Url $url): RobotsTxt
     {
-        $response = ($this->transport)(
+        $response = ($this->fulfill)(
             new Request(
                 $url,
                 Method::get(),
@@ -53,21 +53,30 @@ final class Parser implements ParserInterface
                 Headers::of(
                     new Header\Header(
                         'User-Agent',
-                        new Value($this->userAgent)
-                    )
-                )
-            )
+                        new Value($this->userAgent),
+                    ),
+                ),
+            ),
         );
 
         if ($response->statusCode()->value() !== StatusCode::codes()->get('OK')) {
-            throw new FileNotFound;
+            throw new FileNotFound($url->toString());
         }
 
-        $directives = ($this->walker)(new Str((string) $response->body()));
+        /** @var Sequence<Str> */
+        $lines = Sequence::defer(
+            Str::class,
+            (static function(Readable $robot): \Generator {
+                while (!$robot->end()) {
+                    yield $robot->readLine();
+                }
+            })($response->body()),
+        );
+        $directives = ($this->walker)($lines);
 
         return new RobotsTxt\RobotsTxt(
             $url,
-            $directives
+            $directives,
         );
     }
 }

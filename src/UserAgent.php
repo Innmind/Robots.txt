@@ -6,5 +6,5 @@ namespace Innmind\RobotsTxt;
 interface UserAgent
 {
     public function matches(string $userAgent): bool;
-    public function __toString(): string;
+    public function toString(): string;
 }

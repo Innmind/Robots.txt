@@ -88,13 +88,13 @@ class CombinedUserAgentTest extends TestCase
         );
         $first
             ->expects($this->once())
-            ->method('__toString')
+            ->method('toString')
             ->willReturn('foo');
         $second
             ->expects($this->once())
-            ->method('__toString')
+            ->method('toString')
             ->willReturn('bar');
 
-        $this->assertSame('foo'."\n".'bar', (string) $userAgent);
+        $this->assertSame('foo'."\n".'bar', $userAgent->toString());
     }
 }
