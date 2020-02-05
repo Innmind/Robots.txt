@@ -1,10 +1,8 @@
 # Robots.txt
 
-| `master` | `develop` |
-|----------|-----------|
-| [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Innmind/Robots.txt/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Innmind/Robots.txt/?branch=master) | [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Innmind/Robots.txt/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/Innmind/Robots.txt/?branch=develop) |
-| [![Code Coverage](https://scrutinizer-ci.com/g/Innmind/Robots.txt/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Innmind/Robots.txt/?branch=master) | [![Code Coverage](https://scrutinizer-ci.com/g/Innmind/Robots.txt/badges/coverage.png?b=develop)](https://scrutinizer-ci.com/g/Innmind/Robots.txt/?branch=develop) |
-| [![Build Status](https://scrutinizer-ci.com/g/Innmind/Robots.txt/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Innmind/Robots.txt/build-status/master) | [![Build Status](https://scrutinizer-ci.com/g/Innmind/Robots.txt/badges/build.png?b=develop)](https://scrutinizer-ci.com/g/Innmind/Robots.txt/build-status/develop) |
+[![codecov](https://codecov.io/gh/Innmind/Robots.txt/branch/develop/graph/badge.svg)](https://codecov.io/gh/Innmind/Robots.txt)
+[![Build Status](https://github.com/Innmind/Robots.txt/workflows/CI/badge.svg)](https://github.com/Innmind/Robots.txt/actions?query=workflow%3ACI)
+[![Type Coverage](https://shepherd.dev/github/Innmind/Robots.txt/coverage.svg)](https://shepherd.dev/github/Innmind/Robots.txt)
 
 Robots.txt parser
 
