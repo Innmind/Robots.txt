@@ -66,12 +66,7 @@ class ParserTest extends TestCase
             ->expects($this->once())
             ->method('body')
             ->willReturn(
-                $stream = $this->createMock(Readable::class)
-            );
-        $stream
-            ->expects($this->once())
-            ->method('read')
-            ->willReturn(Str::of(<<<TXT
+                Readable\Stream::ofContent(<<<TXT
 Sitemap : foo.xml
 Host : example.com
 Crawl-delay: 10
@@ -85,7 +80,8 @@ Disallow :
 Crawl-delay : 10
 Crawl-delay : 20
 TXT
-            ));
+                ),
+            );
         $expected = 'User-agent: Foo'."\n";
         $expected .= 'User-agent: Bar'."\n";
         $expected .= 'Allow: /foo'."\n";

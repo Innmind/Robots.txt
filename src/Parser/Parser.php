@@ -19,6 +19,11 @@ use Innmind\Http\{
     Header,
     Header\Value\Value,
 };
+use Innmind\Stream\Readable;
+use Innmind\Immutable\{
+    Sequence,
+    Str,
+};
 
 final class Parser implements ParserInterface
 {
@@ -59,7 +64,14 @@ final class Parser implements ParserInterface
             throw new FileNotFound;
         }
 
-        $directives = ($this->walker)($response->body()->read());
+        $directives = ($this->walker)(Sequence::defer(
+            Str::class,
+            (static function(Readable $robot): \Generator {
+                while (!$robot->end()) {
+                    yield $robot->readLine();
+                }
+            })($response->body()),
+        ));
 
         return new RobotsTxt\RobotsTxt(
             $url,

@@ -35,12 +35,13 @@ final class Walker
     }
 
     /**
+     * @param Sequence<Str> $lines
+     *
      * @return Sequence<Directives>
      */
-    public function __invoke(Str $robots): Sequence
+    public function __invoke(Sequence $lines): Sequence
     {
-        return $robots
-            ->split("\n")
+        return $lines
             ->map(static function(Str $line): Str {
                 return $line
                     ->pregReplace('/ #.*/', '')

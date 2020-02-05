@@ -10,6 +10,7 @@ use Innmind\RobotsTxt\{
 use Innmind\Immutable\{
     Str,
     Sequence,
+    Set,
 };
 use PHPUnit\Framework\TestCase;
 
@@ -41,7 +42,7 @@ TXT;
         $secondDirectives .= 'Disallow: '."\n";
         $secondDirectives .= 'Crawl-delay: 20';
 
-        $stream = (new Walker)(Str::of($robots));
+        $stream = (new Walker)(Str::of($robots)->split("\n"));
 
         $this->assertInstanceOf(Sequence::class, $stream);
         $this->assertSame(Directives::class, (string) $stream->type());
