@@ -29,7 +29,6 @@ class ParserTest extends TestCase
             ParserInterface::class,
             new Parser(
                 $this->createMock(Transport::class),
-                new Walker,
                 'foo'
             )
         );
@@ -39,7 +38,6 @@ class ParserTest extends TestCase
     {
         $parse = new Parser(
             $transport = $this->createMock(Transport::class),
-            new Walker,
             'InnmindCrawler'
         );
         $url = Url::of('http://example.com');
@@ -102,7 +100,6 @@ TXT
     {
         $parse = new Parser(
             $transport = $this->createMock(Transport::class),
-            new Walker,
             'InnmindCrawler'
         );
         $url = Url::of('http://example.com');
