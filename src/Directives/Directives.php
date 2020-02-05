@@ -11,7 +11,10 @@ use Innmind\RobotsTxt\{
     CrawlDelay,
 };
 use Innmind\Url\Url;
-use Innmind\Immutable\Set;
+use Innmind\Immutable\{
+    Set,
+    Exception\NoElementMatchingPredicateFound,
+};
 use function Innmind\Immutable\{
     assertSet,
     join,
@@ -78,24 +81,18 @@ final class Directives implements DirectivesInterface
     public function disallows(Url $url): bool
     {
         $url = $this->clean($url)->toString();
-        $disallow = $this
-            ->disallow
-            ->reduce(
-                false,
-                function(bool $carry, Disallow $disallow) use ($url): bool {
-                    if ($carry === true) {
-                        return $carry;
-                    }
 
-                    return $disallow->matches($url);
-                },
+        try {
+            $this->disallow->find(
+                static fn(Disallow $disallow): bool => $disallow->matches($url),
             );
 
-        if ($disallow === false) {
+            // if a disallow directive is found and the url is not explicitly
+            // allowed then the url is considered disallowed
+            return !$this->allows($url);
+        } catch (NoElementMatchingPredicateFound $e) {
             return false;
         }
-
-        return !$this->allows($url);
     }
 
     /**
@@ -147,18 +144,15 @@ final class Directives implements DirectivesInterface
 
     private function allows(string $url): bool
     {
-        return $this
-            ->allow
-            ->reduce(
-                false,
-                function(bool $carry, Allow $allow) use ($url): bool {
-                    if ($carry === true) {
-                        return $carry;
-                    }
-
-                    return $allow->matches($url);
-                },
+        try {
+            $this->allow->find(
+                static fn(Allow $allow): bool => $allow->matches($url),
             );
+
+            return true;
+        } catch (NoElementMatchingPredicateFound $e) {
+            return false;
+        }
     }
 
     private function clean(Url $url): Url

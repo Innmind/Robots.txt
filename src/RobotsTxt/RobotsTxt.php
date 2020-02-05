@@ -8,7 +8,10 @@ use Innmind\RobotsTxt\{
     Directives,
 };
 use Innmind\Url\Url;
-use Innmind\Immutable\Sequence;
+use Innmind\Immutable\{
+    Sequence,
+    Exception\NoElementMatchingPredicateFound,
+};
 use function Innmind\Immutable\{
     assertSequence,
     join,
@@ -53,16 +56,15 @@ final class RobotsTxt implements RobotsTxtInterface
             return false;
         }
 
-        return $directives->reduce(
-            false,
-            static function(bool $carry, Directives $directives) use ($url): bool {
-                if ($carry === true) {
-                    return $carry;
-                }
+        try {
+            $directives->find(
+                static fn(Directives $directives): bool => $directives->disallows($url),
+            );
 
-                return $directives->disallows($url);
-            },
-        );
+            return true;
+        } catch (NoElementMatchingPredicateFound $e) {
+            return false;
+        }
     }
 
     public function toString(): string
