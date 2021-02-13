@@ -38,15 +38,10 @@ class DirectivesTest extends TestCase
             Set::of(Disallow::class)
         );
         $userAgent
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('matches')
             ->with('foo')
-            ->willReturn(true);
-        $userAgent
-            ->expects($this->at(1))
-            ->method('matches')
-            ->with('foo')
-            ->willReturn(false);
+            ->will($this->onConsecutiveCalls(true, false));
 
         $this->assertTrue($directives->targets('foo'));
         $this->assertFalse($directives->targets('foo'));
