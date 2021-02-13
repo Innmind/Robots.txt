@@ -98,6 +98,7 @@ final class Walker
             ->mapTo(
                 Directives::class, // simply a type change to the sequence here
                 static function(Directives\Directives $directives): Directives {
+                    /** @var Directives */
                     return $directives;
                 },
             );

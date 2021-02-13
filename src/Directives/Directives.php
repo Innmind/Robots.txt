@@ -23,11 +23,17 @@ use function Innmind\Immutable\{
 final class Directives implements DirectivesInterface
 {
     private UserAgent $userAgent;
+    /** @var Set<Allow> */
     private Set $allow;
+    /** @var Set<Disallow> */
     private Set $disallow;
     private ?CrawlDelay $crawlDelay = null;
     private ?string $string = null;
 
+    /**
+     * @param Set<Allow> $allow
+     * @param Set<Disallow> $disallow
+     */
     public function __construct(
         UserAgent $userAgent,
         Set $allow,
