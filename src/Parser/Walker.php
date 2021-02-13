@@ -174,7 +174,8 @@ final class Walker
      *
      * @return Sequence<Directives\Directives>
      */
-    private function groupDirectives(Sequence $directives, object $directive): Sequence {
+    private function groupDirectives(Sequence $directives, object $directive): Sequence
+    {
         if ($directive instanceof UserAgent) {
             /** @var UserAgent */
             $directive = $directive;

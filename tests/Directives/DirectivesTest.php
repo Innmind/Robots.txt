@@ -158,7 +158,7 @@ class DirectivesTest extends TestCase
         $this->assertInstanceOf(Directives::class, $directives2);
         $this->assertNotSame($directives, $directives2);
         $this->assertSame(
-            "User-agent: *",
+            'User-agent: *',
             $directives->toString(),
         );
         $this->assertSame(
@@ -179,7 +179,7 @@ class DirectivesTest extends TestCase
         $this->assertInstanceOf(Directives::class, $directives2);
         $this->assertNotSame($directives, $directives2);
         $this->assertSame(
-            "User-agent: *",
+            'User-agent: *',
             $directives->toString(),
         );
         $this->assertSame(
@@ -200,7 +200,7 @@ class DirectivesTest extends TestCase
         $this->assertInstanceOf(Directives::class, $directives2);
         $this->assertNotSame($directives, $directives2);
         $this->assertSame(
-            "User-agent: *",
+            'User-agent: *',
             $directives->toString(),
         );
         $this->assertSame(
