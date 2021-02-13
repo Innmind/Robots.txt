@@ -153,6 +153,11 @@ final class Walker
             return ($directives)($directive);
         }
 
+        /** @var UserAgent */
+        $last = $last;
+        /** @var UserAgent */
+        $directive = $directive;
+
         return $directives
             ->dropEnd(1)
             ->add(
@@ -171,6 +176,9 @@ final class Walker
      */
     private function groupDirectives(Sequence $directives, object $directive): Sequence {
         if ($directive instanceof UserAgent) {
+            /** @var UserAgent */
+            $directive = $directive;
+
             return ($directives)(
                 new Directives\Directives(
                     $directive,
