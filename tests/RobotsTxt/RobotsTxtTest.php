@@ -56,30 +56,15 @@ class RobotsTxtTest extends TestCase
         );
         $url = Url::of('http://example.com/robots.txt');
         $mock
-            ->expects($this->at(0))
+            ->expects($this->exactly(3))
             ->method('targets')
             ->with('foo')
-            ->willReturn(true);
+            ->will($this->onConsecutiveCalls(true, true, false));
         $mock
-            ->expects($this->at(1))
+            ->expects($this->exactly(2))
             ->method('disallows')
             ->with($url)
-            ->willReturn(true);
-        $mock
-            ->expects($this->at(2))
-            ->method('targets')
-            ->with('foo')
-            ->willReturn(true);
-        $mock
-            ->expects($this->at(3))
-            ->method('disallows')
-            ->with($url)
-            ->willReturn(false);
-        $mock
-            ->expects($this->at(4))
-            ->method('targets')
-            ->with('foo')
-            ->willReturn(false);
+            ->will($this->onConsecutiveCalls(true, false));
 
         $this->assertTrue($robots->disallows('foo', $url));
         $this->assertFalse($robots->disallows('foo', $url));
@@ -98,22 +83,22 @@ class RobotsTxtTest extends TestCase
         );
         $url = Url::of('http://example.com/robots.txt');
         $mock1
-            ->expects($this->at(0))
+            ->expects($this->once())
             ->method('targets')
             ->with('foo')
             ->willReturn(true);
         $mock2
-            ->expects($this->at(0))
+            ->expects($this->once())
             ->method('targets')
             ->with('foo')
             ->willReturn(true);
         $mock1
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('disallows')
             ->with($url)
             ->willReturn(false);
         $mock2
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('disallows')
             ->with($url)
             ->willReturn(true);

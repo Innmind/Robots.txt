@@ -98,6 +98,7 @@ final class Walker
             ->mapTo(
                 Directives::class, // simply a type change to the sequence here
                 static function(Directives\Directives $directives): Directives {
+                    /** @var Directives */
                     return $directives;
                 },
             );
@@ -152,6 +153,11 @@ final class Walker
             return ($directives)($directive);
         }
 
+        /** @var UserAgent */
+        $last = $last;
+        /** @var UserAgent */
+        $directive = $directive;
+
         return $directives
             ->dropEnd(1)
             ->add(
@@ -168,8 +174,12 @@ final class Walker
      *
      * @return Sequence<Directives\Directives>
      */
-    private function groupDirectives(Sequence $directives, object $directive): Sequence {
+    private function groupDirectives(Sequence $directives, object $directive): Sequence
+    {
         if ($directive instanceof UserAgent) {
+            /** @var UserAgent */
+            $directive = $directive;
+
             return ($directives)(
                 new Directives\Directives(
                     $directive,

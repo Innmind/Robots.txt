@@ -40,9 +40,6 @@ final class Parser implements ParserInterface
         $this->userAgent = $userAgent;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __invoke(Url $url): RobotsTxt
     {
         $response = ($this->fulfill)(

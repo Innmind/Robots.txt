@@ -18,7 +18,6 @@ use Innmind\Http\Message\{
     Response,
 };
 use Innmind\Stream\Readable;
-use Innmind\Immutable\Str;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
@@ -44,7 +43,7 @@ class ParserTest extends TestCase
         $transport
             ->expects($this->once())
             ->method('__invoke')
-            ->with($this->callback(function(Request $request) use ($url): bool {
+            ->with($this->callback(static function(Request $request) use ($url): bool {
                 return $request->url() === $url &&
                     $request->method()->toString() === 'GET' &&
                     $request->protocolVersion()->toString() === '2.0' &&
