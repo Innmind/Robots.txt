@@ -16,7 +16,7 @@ class UserAgentTest extends TestCase
     {
         $this->assertInstanceOf(
             UserAgentInterface::class,
-            new UserAgent('*')
+            new UserAgent('*'),
         );
     }
 
@@ -34,7 +34,7 @@ class UserAgentTest extends TestCase
     {
         $this->assertSame(
             $expected,
-            (new UserAgent($pattern))->matches($userAgent)
+            (new UserAgent($pattern))->matches($userAgent),
         );
     }
 

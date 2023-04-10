@@ -23,7 +23,7 @@ class UrlPatternTest extends TestCase
     {
         $this->assertSame(
             $expected,
-            (new UrlPattern($pattern))->matches($url)
+            (new UrlPattern($pattern))->matches($url),
         );
     }
 

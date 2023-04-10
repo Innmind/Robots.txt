@@ -28,8 +28,8 @@ class ParserTest extends TestCase
             ParserInterface::class,
             new Parser(
                 $this->createMock(Transport::class),
-                'foo'
-            )
+                'foo',
+            ),
         );
     }
 
@@ -37,7 +37,7 @@ class ParserTest extends TestCase
     {
         $parse = new Parser(
             $transport = $this->createMock(Transport::class),
-            'InnmindCrawler'
+            'InnmindCrawler',
         );
         $url = Url::of('http://example.com');
         $transport
@@ -53,7 +53,7 @@ class ParserTest extends TestCase
                     $request->body()->toString() === '';
             }))
             ->willReturn(
-                $response = $this->createMock(Response::class)
+                $response = $this->createMock(Response::class),
             );
         $response
             ->expects($this->once())
@@ -99,14 +99,14 @@ TXT
     {
         $parse = new Parser(
             $transport = $this->createMock(Transport::class),
-            'InnmindCrawler'
+            'InnmindCrawler',
         );
         $url = Url::of('http://example.com');
         $transport
             ->expects($this->once())
             ->method('__invoke')
             ->willReturn(
-                $response = $this->createMock(Response::class)
+                $response = $this->createMock(Response::class),
             );
         $response
             ->expects($this->once())

@@ -17,8 +17,8 @@ class CombinedUserAgentTest extends TestCase
             UserAgent::class,
             new CombinedUserAgent(
                 $this->createMock(UserAgent::class),
-                $this->createMock(UserAgent::class)
-            )
+                $this->createMock(UserAgent::class),
+            ),
         );
     }
 
@@ -26,7 +26,7 @@ class CombinedUserAgentTest extends TestCase
     {
         $userAgent = new CombinedUserAgent(
             $first = $this->createMock(UserAgent::class),
-            $second = $this->createMock(UserAgent::class)
+            $second = $this->createMock(UserAgent::class),
         );
         $first
             ->expects($this->once())
@@ -44,7 +44,7 @@ class CombinedUserAgentTest extends TestCase
     {
         $userAgent = new CombinedUserAgent(
             $first = $this->createMock(UserAgent::class),
-            $second = $this->createMock(UserAgent::class)
+            $second = $this->createMock(UserAgent::class),
         );
         $first
             ->expects($this->once())
@@ -64,7 +64,7 @@ class CombinedUserAgentTest extends TestCase
     {
         $userAgent = new CombinedUserAgent(
             $first = $this->createMock(UserAgent::class),
-            $second = $this->createMock(UserAgent::class)
+            $second = $this->createMock(UserAgent::class),
         );
         $first
             ->expects($this->once())
@@ -84,7 +84,7 @@ class CombinedUserAgentTest extends TestCase
     {
         $userAgent = new CombinedUserAgent(
             $first = $this->createMock(UserAgent::class),
-            $second = $this->createMock(UserAgent::class)
+            $second = $this->createMock(UserAgent::class),
         );
         $first
             ->expects($this->once())

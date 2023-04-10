@@ -38,7 +38,7 @@ final class Directives implements DirectivesInterface
         UserAgent $userAgent,
         Set $allow,
         Set $disallow,
-        CrawlDelay $crawlDelay = null
+        CrawlDelay $crawlDelay = null,
     ) {
         assertSet(Allow::class, $allow, 2);
         assertSet(Disallow::class, $disallow, 3);

@@ -33,7 +33,7 @@ final class Parser implements ParserInterface
 
     public function __construct(
         Transport $fulfill,
-        string $userAgent
+        string $userAgent,
     ) {
         $this->fulfill = $fulfill;
         $this->walker = new Walker;

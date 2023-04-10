@@ -25,8 +25,8 @@ class DirectivesTest extends TestCase
             new Directives(
                 $this->createMock(UserAgent::class),
                 Set::of(Allow::class),
-                Set::of(Disallow::class)
-            )
+                Set::of(Disallow::class),
+            ),
         );
     }
 
@@ -35,7 +35,7 @@ class DirectivesTest extends TestCase
         $directives = new Directives(
             $userAgent = $this->createMock(UserAgent::class),
             Set::of(Allow::class),
-            Set::of(Disallow::class)
+            Set::of(Disallow::class),
         );
         $userAgent
             ->expects($this->exactly(2))
@@ -52,7 +52,7 @@ class DirectivesTest extends TestCase
         $directives = new Directives(
             $this->createMock(UserAgent::class),
             Set::of(Allow::class),
-            Set::of(Disallow::class)
+            Set::of(Disallow::class),
         );
         $this->assertFalse($directives->hasCrawlDelay());
 
@@ -60,7 +60,7 @@ class DirectivesTest extends TestCase
             $this->createMock(UserAgent::class),
             Set::of(Allow::class),
             Set::of(Disallow::class),
-            new CrawlDelay(0)
+            new CrawlDelay(0),
         );
         $this->assertTrue($directives->hasCrawlDelay());
     }
@@ -71,7 +71,7 @@ class DirectivesTest extends TestCase
             $userAgent = $this->createMock(UserAgent::class),
             Set::of(Allow::class),
             Set::of(Disallow::class),
-            $delay = new CrawlDelay(0)
+            $delay = new CrawlDelay(0),
         );
 
         $this->assertSame($delay, $directives->crawlDelay());
@@ -85,12 +85,12 @@ class DirectivesTest extends TestCase
         $directives = new Directives(
             $this->createMock(UserAgent::class),
             Set::of(Allow::class, new Allow(new UrlPattern($allow))),
-            Set::of(Disallow::class, new Disallow(new UrlPattern($disallow)))
+            Set::of(Disallow::class, new Disallow(new UrlPattern($disallow))),
         );
 
         $this->assertSame(
             $expected,
-            $directives->disallows(Url::of($url))
+            $directives->disallows(Url::of($url)),
         );
     }
 
@@ -102,7 +102,7 @@ class DirectivesTest extends TestCase
         new Directives(
             $this->createMock(UserAgent::class),
             Set::of(UrlPattern::class),
-            Set::of(Disallow::class)
+            Set::of(Disallow::class),
         );
     }
 
@@ -114,7 +114,7 @@ class DirectivesTest extends TestCase
         new Directives(
             $this->createMock(UserAgent::class),
             Set::of(Allow::class),
-            Set::of(UrlPattern::class)
+            Set::of(UrlPattern::class),
         );
     }
 
@@ -134,14 +134,14 @@ class DirectivesTest extends TestCase
                 Set::of(
                     Allow::class,
                     new Allow(new UrlPattern('/foo')),
-                    new Allow(new UrlPattern('/bar'))
+                    new Allow(new UrlPattern('/bar')),
                 ),
                 Set::of(
                     Disallow::class,
                     new Disallow(new UrlPattern('/baz')),
-                    new Disallow(new UrlPattern('/'))
+                    new Disallow(new UrlPattern('/')),
                 ),
-                new CrawlDelay(10)
+                new CrawlDelay(10),
             ))->toString(),
         );
     }

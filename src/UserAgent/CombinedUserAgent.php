@@ -12,7 +12,7 @@ final class CombinedUserAgent implements UserAgentInterface
 
     public function __construct(
         UserAgentInterface $first,
-        UserAgentInterface $second
+        UserAgentInterface $second,
     ) {
         $this->first = $first;
         $this->second = $second;

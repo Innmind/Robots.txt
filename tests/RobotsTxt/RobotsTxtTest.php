@@ -20,8 +20,8 @@ class RobotsTxtTest extends TestCase
             RobotsTxtInterface::class,
             new RobotsTxt(
                 Url::of('http://example.com/robots.txt'),
-                Sequence::of(Directives::class)
-            )
+                Sequence::of(Directives::class),
+            ),
         );
     }
 
@@ -29,7 +29,7 @@ class RobotsTxtTest extends TestCase
     {
         $robots = new RobotsTxt(
             $url = Url::of('http://example.com/robots.txt'),
-            Sequence::of(Directives::class)
+            Sequence::of(Directives::class),
         );
 
         $this->assertSame($url, $robots->url());
@@ -39,7 +39,7 @@ class RobotsTxtTest extends TestCase
     {
         $robots = new RobotsTxt(
             Url::of('http://example.com/robots.txt'),
-            $directives = Sequence::of(Directives::class)
+            $directives = Sequence::of(Directives::class),
         );
 
         $this->assertSame($directives, $robots->directives());
@@ -51,8 +51,8 @@ class RobotsTxtTest extends TestCase
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
                 Directives::class,
-                $mock = $this->createMock(Directives::class)
-            )
+                $mock = $this->createMock(Directives::class),
+            ),
         );
         $url = Url::of('http://example.com/robots.txt');
         $mock
@@ -78,8 +78,8 @@ class RobotsTxtTest extends TestCase
             Sequence::of(
                 Directives::class,
                 $mock1 = $this->createMock(Directives::class),
-                $mock2 = $this->createMock(Directives::class)
-            )
+                $mock2 = $this->createMock(Directives::class),
+            ),
         );
         $url = Url::of('http://example.com/robots.txt');
         $mock1
@@ -113,8 +113,8 @@ class RobotsTxtTest extends TestCase
             Sequence::of(
                 Directives::class,
                 $mock1 = $this->createMock(Directives::class),
-                $mock2 = $this->createMock(Directives::class)
-            )
+                $mock2 = $this->createMock(Directives::class),
+            ),
         );
         $mock1
             ->expects($this->once())
