@@ -5,17 +5,28 @@ namespace Innmind\RobotsTxt;
 
 use Innmind\Immutable\{
     Str,
-    Exception\RegexException,
-    Exception\SubstringException,
+    Exception\LogicException,
+    Exception\InvalidRegex,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class UrlPattern
 {
     private string $pattern;
 
-    public function __construct(string $pattern)
+    private function __construct(string $pattern)
     {
         $this->pattern = $pattern;
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(string $pattern): self
+    {
+        return new self($pattern);
     }
 
     public function matches(string $url): bool
@@ -30,15 +41,11 @@ final class UrlPattern
 
         try {
             return $this->matchRegex($url);
-        } catch (RegexException $e) {
+        } catch (LogicException|InvalidRegex $e) {
             //pass
         }
 
-        try {
-            return $this->fallUnder($url);
-        } catch (SubstringException $e) {
-            return false;
-        }
+        return $this->fallUnder($url);
     }
 
     public function toString(): string
@@ -46,9 +53,6 @@ final class UrlPattern
         return $this->pattern;
     }
 
-    /**
-     * @throws RegexException if the pattern is not a regex
-     */
     private function matchRegex(string $url): bool
     {
         $pattern = Str::of($this->pattern)
@@ -65,6 +69,6 @@ final class UrlPattern
 
     private function fallUnder(string $url): bool
     {
-        return Str::of($url)->position($this->pattern) === 0;
+        return Str::of($url)->startsWith($this->pattern);
     }
 }
