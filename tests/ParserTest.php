@@ -7,7 +7,6 @@ use Innmind\RobotsTxt\{
     Parser,
     Parser\Walker,
     RobotsTxt,
-    Exception\FileNotFound,
 };
 use Innmind\HttpTransport\{
     Transport,
@@ -85,7 +84,10 @@ TXT
         $expected .= 'Disallow: '."\n";
         $expected .= 'Crawl-delay: 20'."\n";
 
-        $robots = $parse($url);
+        $robots = $parse($url)->match(
+            static fn($robots) => $robots,
+            static fn() => null,
+        );
 
         $this->assertInstanceOf(RobotsTxt::class, $robots);
         $this->assertSame($url, $robots->url());
@@ -115,8 +117,9 @@ TXT
                 $response,
             )));
 
-        $this->expectException(FileNotFound::class);
-
-        $parse($url);
+        $this->assertNull($parse($url)->match(
+            static fn($robots) => $robots,
+            static fn() => null,
+        ));
     }
 }

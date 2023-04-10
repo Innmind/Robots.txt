@@ -14,6 +14,7 @@ use Innmind\Http\{
     Header,
     Header\Value\Value,
 };
+use Innmind\Immutable\Maybe;
 
 final class Parser
 {
@@ -30,9 +31,12 @@ final class Parser
         $this->userAgent = $userAgent;
     }
 
-    public function __invoke(Url $url): RobotsTxt
+    /**
+     * @return Maybe<RobotsTxt>
+     */
+    public function __invoke(Url $url): Maybe
     {
-        $response = ($this->fulfill)(
+        return ($this->fulfill)(
             new Request(
                 $url,
                 Method::get,
@@ -44,21 +48,11 @@ final class Parser
                     ),
                 ),
             ),
-        )->match(
-            static fn($success) => $success->response(),
-            static fn() => throw new Exception\FileNotFound($url->toString()),
-        );
-
-        $directives = ($this->walker)(
-            $response
-                ->body()
-                ->lines()
-                ->map(static fn($line) => $line->str())
-        );
-
-        return new RobotsTxt(
-            $url,
-            $directives,
-        );
+        )
+            ->maybe()
+            ->map(static fn($success) => $success->response()->body()->lines())
+            ->map(static fn($lines) => $lines->map(static fn($line) => $line->str()))
+            ->map($this->walker)
+            ->map(static fn($directives) => new RobotsTxt($url, $directives));
     }
 }
