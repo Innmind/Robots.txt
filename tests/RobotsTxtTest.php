@@ -18,7 +18,7 @@ class RobotsTxtTest extends TestCase
 {
     public function testUrl()
     {
-        $robots = new RobotsTxt(
+        $robots = RobotsTxt::of(
             $url = Url::of('http://example.com/robots.txt'),
             Sequence::of(),
         );
@@ -28,7 +28,7 @@ class RobotsTxtTest extends TestCase
 
     public function testDirectives()
     {
-        $robots = new RobotsTxt(
+        $robots = RobotsTxt::of(
             Url::of('http://example.com/robots.txt'),
             $directives = Sequence::of(),
         );
@@ -38,7 +38,7 @@ class RobotsTxtTest extends TestCase
 
     public function testDisallows()
     {
-        $robots = new RobotsTxt(
+        $robots = RobotsTxt::of(
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
                 Directives::of(
@@ -56,7 +56,7 @@ class RobotsTxtTest extends TestCase
 
     public function testFallbackDirectivesWhenUserAgentMatchesMultipleOnes()
     {
-        $robots = new RobotsTxt(
+        $robots = RobotsTxt::of(
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
                 Directives::of(
@@ -75,7 +75,7 @@ class RobotsTxtTest extends TestCase
 
     public function testStringCast()
     {
-        $robots = new RobotsTxt(
+        $robots = RobotsTxt::of(
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
                 Directives::of(

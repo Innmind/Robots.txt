@@ -22,12 +22,12 @@ final class Parser
     private Walker $walker;
     private string $userAgent;
 
-    public function __construct(
+    private function __construct(
         Transport $fulfill,
         string $userAgent,
     ) {
         $this->fulfill = $fulfill;
-        $this->walker = new Walker;
+        $this->walker = Walker::of();
         $this->userAgent = $userAgent;
     }
 
@@ -52,6 +52,11 @@ final class Parser
             ->maybe()
             ->map(static fn($success) => $success->response()->body()->lines())
             ->map($this->walker)
-            ->map(static fn($directives) => new RobotsTxt($url, $directives));
+            ->map(static fn($directives) => RobotsTxt::of($url, $directives));
+    }
+
+    public static function of(Transport $fulfill, string $userAgent): self
+    {
+        return new self($fulfill, $userAgent);
     }
 }

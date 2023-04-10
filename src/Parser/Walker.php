@@ -25,6 +25,10 @@ use Innmind\Immutable\{
  */
 final class Walker
 {
+    private function __construct()
+    {
+    }
+
     /**
      * @param Sequence<Line> $lines
      *
@@ -90,5 +94,10 @@ final class Walker
                 });
             })
             ->keep(Instance::of(Directives::class));
+    }
+
+    public static function of(): self
+    {
+        return new self;
     }
 }

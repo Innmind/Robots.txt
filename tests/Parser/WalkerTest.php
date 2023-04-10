@@ -43,7 +43,7 @@ TXT;
         $secondDirectives .= 'Disallow: '."\n";
         $secondDirectives .= 'Crawl-delay: 20';
 
-        $stream = (new Walker)(Str::of($robots)->split("\n")->map(Line::of(...)));
+        $stream = Walker::of()(Str::of($robots)->split("\n")->map(Line::of(...)));
 
         $this->assertInstanceOf(Sequence::class, $stream);
         $this->assertCount(2, $stream);

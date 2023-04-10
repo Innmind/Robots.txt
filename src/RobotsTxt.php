@@ -22,10 +22,20 @@ final class RobotsTxt
     /**
      * @param Sequence<Directives> $directives
      */
-    public function __construct(Url $url, Sequence $directives)
+    private function __construct(Url $url, Sequence $directives)
     {
         $this->url = $url;
         $this->directives = $directives;
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param Sequence<Directives> $directives
+     */
+    public static function of(Url $url, Sequence $directives): self
+    {
+        return new self($url, $directives);
     }
 
     public function url(): Url

@@ -27,7 +27,7 @@ class ParserTest extends TestCase
 {
     public function testExecution()
     {
-        $parse = new Parser(
+        $parse = Parser::of(
             $transport = $this->createMock(Transport::class),
             'InnmindCrawler',
         );
@@ -96,7 +96,7 @@ TXT
 
     public function testThrowWhenRequestNotFulfilled()
     {
-        $parse = new Parser(
+        $parse = Parser::of(
             $transport = $this->createMock(Transport::class),
             'InnmindCrawler',
         );
