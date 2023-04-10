@@ -1,11 +1,10 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\RobotsTxt\Parser;
+namespace Tests\Innmind\RobotsTxt;
 
 use Innmind\RobotsTxt\{
-    Parser\Parser,
-    Parser as ParserInterface,
+    Parser,
     Parser\Walker,
     RobotsTxt,
     Exception\FileNotFound,
@@ -27,17 +26,6 @@ use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            ParserInterface::class,
-            new Parser(
-                $this->createMock(Transport::class),
-                'foo',
-            ),
-        );
-    }
-
     public function testExecution()
     {
         $parse = new Parser(
