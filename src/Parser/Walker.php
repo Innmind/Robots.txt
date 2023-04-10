@@ -11,6 +11,7 @@ use Innmind\RobotsTxt\{
     CrawlDelay,
     Directives,
 };
+use Innmind\Filesystem\File\Content\Line;
 use Innmind\Immutable\{
     Str,
     Sequence,
@@ -25,13 +26,14 @@ use Innmind\Immutable\{
 final class Walker
 {
     /**
-     * @param Sequence<Str> $lines
+     * @param Sequence<Line> $lines
      *
      * @return Sequence<Directives>
      */
     public function __invoke(Sequence $lines): Sequence
     {
         return $lines
+            ->map(static fn($line) => $line->str())
             ->map(static function(Str $line): Str {
                 return $line
                     ->pregReplace('/ #.*/', '')

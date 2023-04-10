@@ -51,7 +51,6 @@ final class Parser
         )
             ->maybe()
             ->map(static fn($success) => $success->response()->body()->lines())
-            ->map(static fn($lines) => $lines->map(static fn($line) => $line->str()))
             ->map($this->walker)
             ->map(static fn($directives) => new RobotsTxt($url, $directives));
     }

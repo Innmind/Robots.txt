@@ -7,6 +7,7 @@ use Innmind\RobotsTxt\{
     Parser\Walker,
     Directives,
 };
+use Innmind\Filesystem\File\Content\Line;
 use Innmind\Immutable\{
     Str,
     Sequence,
@@ -42,7 +43,7 @@ TXT;
         $secondDirectives .= 'Disallow: '."\n";
         $secondDirectives .= 'Crawl-delay: 20';
 
-        $stream = (new Walker)(Str::of($robots)->split("\n"));
+        $stream = (new Walker)(Str::of($robots)->split("\n")->map(Line::of(...)));
 
         $this->assertInstanceOf(Sequence::class, $stream);
         $this->assertCount(2, $stream);
