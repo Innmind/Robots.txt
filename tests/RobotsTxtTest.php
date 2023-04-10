@@ -1,11 +1,10 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\RobotsTxt\RobotsTxt;
+namespace Tests\Innmind\RobotsTxt;
 
 use Innmind\RobotsTxt\{
-    RobotsTxt\RobotsTxt,
-    RobotsTxt as RobotsTxtInterface,
+    RobotsTxt,
     Directives,
     Disallow,
     UrlPattern,
@@ -20,17 +19,6 @@ use PHPUnit\Framework\TestCase;
 
 class RobotsTxtTest extends TestCase
 {
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            RobotsTxtInterface::class,
-            new RobotsTxt(
-                Url::of('http://example.com/robots.txt'),
-                Sequence::of(),
-            ),
-        );
-    }
-
     public function testUrl()
     {
         $robots = new RobotsTxt(

@@ -56,7 +56,7 @@ final class Parser
                 ->map(static fn($line) => $line->str())
         );
 
-        return new RobotsTxt\RobotsTxt(
+        return new RobotsTxt(
             $url,
             $directives,
         );
