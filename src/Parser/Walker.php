@@ -19,7 +19,6 @@ use Innmind\Immutable\{
     Pair,
     Map,
 };
-use function Innmind\Immutable\join;
 
 final class Walker
 {
@@ -50,56 +49,38 @@ final class Walker
                     ->trim();
             })
             ->filter(static fn(Str $line): bool => !$line->empty())
-            ->filter(static fn(Str $line): bool => $line->split(':')->size() >= 2)
-            ->mapTo(
-                Pair::class,
-                static function(Str $line): Pair {
-                    $parts = $line->split(':');
-
-                    $directive = $parts->drop(1)->mapTo(
-                        'string',
-                        static fn(Str $part): string => $part->toString(),
-                    );
-
-                    return new Pair(
-                        $parts->first()->toLower()->trim(),
-                        join(':', $directive)->trim(),
-                    );
-                },
-            )
+            ->flatMap(static fn($line) =>  $line->split(':')->match(
+                static fn($first, $directive) => Sequence::of(new Pair(
+                    $first->toLower()->trim(),
+                    Str::of(':')
+                        ->join($directive->map(static fn($part) => $part->toString()))
+                        ->trim(),
+                )),
+                static fn() => Sequence::of(),
+            ))
             ->filter(function(Pair $line): bool {
                 return $this->supportedKeys->contains($line->key()->toString());
             })
-            ->mapTo(
-                UserAgent::class.'|'.Allow::class.'|'.Disallow::class.'|'.CrawlDelay::class,
-                function(Pair $directive): object {
-                    return $this->transformLineToObject($directive);
-                },
-            )
+            ->map(function(Pair $directive): object {
+                return $this->transformLineToObject($directive);
+            })
             ->reduce(
                 // it would be nice to find a way not to unwrap the whole content
                 // of the sequence here but continue deferring the parsing
-                Sequence::of(UserAgent::class.'|'.Allow::class.'|'.Disallow::class.'|'.CrawlDelay::class),
+                Sequence::of(),
                 function(Sequence $directives, object $directive): Sequence {
                     /** @var Sequence<UserAgent|Allow|Disallow|CrawlDelay> $directives */
                     return $this->groupUserAgents($directives, $directive);
                 },
             )
             ->reduce(
-                Sequence::of(Directives\Directives::class),
+                Sequence::of(),
                 function(Sequence $directives, object $directive): Sequence {
                     /**
                      * @var UserAgent|Allow|Disallow|CrawlDelay $directive
                      * @var Sequence<Directives\Directives> $directives
                      */
                     return $this->groupDirectives($directives, $directive);
-                },
-            )
-            ->mapTo(
-                Directives::class, // simply a type change to the sequence here
-                static function(Directives\Directives $directives): Directives {
-                    /** @var Directives */
-                    return $directives;
                 },
             );
     }
@@ -144,7 +125,10 @@ final class Walker
             return ($directives)($directive);
         }
 
-        $last = $directives->last();
+        $last = $directives->last()->match(
+            static fn($last) => $last,
+            static fn() => throw new \LogicException,
+        );
 
         if (
             !$last instanceof UserAgent ||
@@ -183,8 +167,8 @@ final class Walker
             return ($directives)(
                 new Directives\Directives(
                     $directive,
-                    Set::of(Allow::class),
-                    Set::of(Disallow::class),
+                    Set::of(),
+                    Set::of(),
                 ),
             );
         }
@@ -195,7 +179,10 @@ final class Walker
             return $directives;
         }
 
-        $currentDirectives = $directives->last();
+        $currentDirectives = $directives->last()->match(
+            static fn($last) => $last,
+            static fn() => throw new \LogicException,
+        );
 
         switch (true) {
             case $directive instanceof Allow:

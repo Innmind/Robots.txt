@@ -13,16 +13,10 @@ use Innmind\Url\Url;
 use Innmind\Http\{
     Message\Request\Request,
     Message\Method,
-    Message\StatusCode,
     ProtocolVersion,
     Headers,
     Header,
     Header\Value\Value,
-};
-use Innmind\Stream\Readable;
-use Innmind\Immutable\{
-    Sequence,
-    Str,
 };
 
 final class Parser implements ParserInterface
@@ -45,8 +39,8 @@ final class Parser implements ParserInterface
         $response = ($this->fulfill)(
             new Request(
                 $url,
-                Method::get(),
-                new ProtocolVersion(2, 0),
+                Method::get,
+                ProtocolVersion::v20,
                 Headers::of(
                     new Header\Header(
                         'User-Agent',
@@ -54,21 +48,17 @@ final class Parser implements ParserInterface
                     ),
                 ),
             ),
+        )->match(
+            static fn($success) => $success->response(),
+            static fn() => throw new FileNotFound($url->toString()),
         );
 
-        if ($response->statusCode()->value() !== StatusCode::codes()->get('OK')) {
-            throw new FileNotFound($url->toString());
-        }
-
-        $lines = Sequence::defer(
-            Str::class,
-            (static function(Readable $robot): \Generator {
-                while (!$robot->end()) {
-                    yield $robot->readLine();
-                }
-            })($response->body()),
+        $directives = ($this->walker)(
+            $response
+                ->body()
+                ->lines()
+                ->map(static fn($line) => $line->str())
         );
-        $directives = ($this->walker)($lines);
 
         return new RobotsTxt\RobotsTxt(
             $url,

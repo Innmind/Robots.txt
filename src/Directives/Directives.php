@@ -13,11 +13,7 @@ use Innmind\RobotsTxt\{
 use Innmind\Url\Url;
 use Innmind\Immutable\{
     Set,
-    Exception\NoElementMatchingPredicateFound,
-};
-use function Innmind\Immutable\{
-    assertSet,
-    join,
+    Str,
 };
 
 final class Directives implements DirectivesInterface
@@ -40,9 +36,6 @@ final class Directives implements DirectivesInterface
         Set $disallow,
         CrawlDelay $crawlDelay = null,
     ) {
-        assertSet(Allow::class, $allow, 2);
-        assertSet(Disallow::class, $disallow, 3);
-
         $this->userAgent = $userAgent;
         $this->allow = $allow;
         $this->disallow = $disallow;
@@ -88,17 +81,16 @@ final class Directives implements DirectivesInterface
     {
         $url = $this->clean($url)->toString();
 
-        try {
-            $this->disallow->find(
-                static fn(Disallow $disallow): bool => $disallow->matches($url),
-            );
-
+        return $this
+            ->disallow
+            ->find(static fn(Disallow $disallow): bool => $disallow->matches($url))
             // if a disallow directive is found and the url is not explicitly
             // allowed then the url is considered disallowed
-            return !$this->allows($url);
-        } catch (NoElementMatchingPredicateFound $e) {
-            return false;
-        }
+            ->filter(fn() => !$this->allows($url))
+            ->match(
+                static fn() => true,
+                static fn() => false,
+            );
     }
 
     /**
@@ -124,21 +116,19 @@ final class Directives implements DirectivesInterface
         $string = $this->userAgent->toString();
 
         if ($this->allow->size() > 0) {
-            $allow = $this->allow->mapTo(
-                'string',
+            $allow = $this->allow->map(
                 static fn(Allow $allow): string => $allow->toString(),
             );
 
-            $string .= join("\n", $allow)->prepend("\n")->toString();
+            $string .= Str::of("\n")->join($allow)->prepend("\n")->toString();
         }
 
         if ($this->disallow->size() > 0) {
-            $disallow = $this->disallow->mapTo(
-                'string',
+            $disallow = $this->disallow->map(
                 static fn(Disallow $disallow): string => $disallow->toString(),
             );
 
-            $string .= join("\n", $disallow)->prepend("\n")->toString();
+            $string .= Str::of("\n")->join($disallow)->prepend("\n")->toString();
         }
 
         if ($this->crawlDelay) {
@@ -150,15 +140,13 @@ final class Directives implements DirectivesInterface
 
     private function allows(string $url): bool
     {
-        try {
-            $this->allow->find(
-                static fn(Allow $allow): bool => $allow->matches($url),
+        return $this
+            ->allow
+            ->find(static fn(Allow $allow): bool => $allow->matches($url))
+            ->match(
+                static fn() => true,
+                static fn() => false,
             );
-
-            return true;
-        } catch (NoElementMatchingPredicateFound $e) {
-            return false;
-        }
     }
 
     private function clean(Url $url): Url

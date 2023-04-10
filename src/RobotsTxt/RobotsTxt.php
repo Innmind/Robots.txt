@@ -10,11 +10,7 @@ use Innmind\RobotsTxt\{
 use Innmind\Url\Url;
 use Innmind\Immutable\{
     Sequence,
-    Exception\NoElementMatchingPredicateFound,
-};
-use function Innmind\Immutable\{
-    assertSequence,
-    join,
+    Str,
 };
 
 final class RobotsTxt implements RobotsTxtInterface
@@ -28,8 +24,6 @@ final class RobotsTxt implements RobotsTxtInterface
      */
     public function __construct(Url $url, Sequence $directives)
     {
-        assertSequence(Directives::class, $directives, 2);
-
         $this->url = $url;
         $this->directives = $directives;
     }
@@ -46,34 +40,24 @@ final class RobotsTxt implements RobotsTxtInterface
 
     public function disallows(string $userAgent, Url $url): bool
     {
-        $directives = $this
+        return $this
             ->directives
             ->filter(static function(Directives $directives) use ($userAgent): bool {
                 return $directives->targets($userAgent);
-            });
-
-        if ($directives->empty()) {
-            return false;
-        }
-
-        try {
-            $directives->find(
-                static fn(Directives $directives): bool => $directives->disallows($url),
+            })
+            ->find(static fn($directives) => $directives->disallows($url))
+            ->match(
+                static fn() => true,
+                static fn() => false,
             );
-
-            return true;
-        } catch (NoElementMatchingPredicateFound $e) {
-            return false;
-        }
     }
 
     public function toString(): string
     {
-        $directives = $this->directives->mapTo(
-            'string',
+        $directives = $this->directives->map(
             static fn(Directives $directives): string => $directives->toString(),
         );
 
-        return join("\n\n", $directives)->toString();
+        return Str::of("\n\n")->join($directives)->toString();
     }
 }

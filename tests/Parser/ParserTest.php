@@ -10,14 +10,19 @@ use Innmind\RobotsTxt\{
     RobotsTxt,
     Exception\FileNotFound,
 };
-use Innmind\HttpTransport\Transport;
+use Innmind\HttpTransport\{
+    Transport,
+    ClientError,
+    Success,
+};
+use Innmind\Filesystem\File\Content;
 use Innmind\Url\Url;
 use Innmind\Http\Message\{
-    Request\Request,
+    Request,
     StatusCode,
     Response,
 };
-use Innmind\Stream\Readable;
+use Innmind\Immutable\Either;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
@@ -40,30 +45,16 @@ class ParserTest extends TestCase
             'InnmindCrawler',
         );
         $url = Url::of('http://example.com');
-        $transport
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->callback(static function(Request $request) use ($url): bool {
-                return $request->url() === $url &&
-                    $request->method()->toString() === 'GET' &&
-                    $request->protocolVersion()->toString() === '2.0' &&
-                    $request->headers()->count() === 1 &&
-                    $request->headers()->contains('user-agent') &&
-                    $request->headers()->get('user-agent')->toString() === 'User-Agent: InnmindCrawler' &&
-                    $request->body()->toString() === '';
-            }))
-            ->willReturn(
-                $response = $this->createMock(Response::class),
-            );
+        $response = $this->createMock(Response::class);
         $response
             ->expects($this->once())
             ->method('statusCode')
-            ->willReturn(new StatusCode(200));
+            ->willReturn(StatusCode::ok);
         $response
             ->expects($this->once())
             ->method('body')
             ->willReturn(
-                Readable\Stream::ofContent(<<<TXT
+                Content\Lines::ofContent(<<<TXT
 Sitemap : foo.xml
 Host : example.com
 Crawl-delay: 10
@@ -79,6 +70,24 @@ Crawl-delay : 20
 TXT
                 ),
             );
+        $transport
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($this->callback(static function(Request $request) use ($url): bool {
+                return $request->url() === $url &&
+                    $request->method()->toString() === 'GET' &&
+                    $request->protocolVersion()->toString() === '2.0' &&
+                    $request->headers()->count() === 1 &&
+                    'User-Agent: InnmindCrawler' === $request->headers()->get('user-agent')->match(
+                        static fn($header) => $header->toString(),
+                        static fn() => null,
+                    ) &&
+                    $request->body()->toString() === '';
+            }))
+            ->willReturn(Either::right(new Success(
+                $this->createMock(Request::class),
+                $response,
+            )));
         $expected = 'User-agent: Foo'."\n";
         $expected .= 'User-agent: Bar'."\n";
         $expected .= 'Allow: /foo'."\n";
@@ -102,19 +111,21 @@ TXT
             'InnmindCrawler',
         );
         $url = Url::of('http://example.com');
-        $transport
-            ->expects($this->once())
-            ->method('__invoke')
-            ->willReturn(
-                $response = $this->createMock(Response::class),
-            );
+        $response = $this->createMock(Response::class);
         $response
             ->expects($this->once())
             ->method('statusCode')
-            ->willReturn(new StatusCode(404));
+            ->willReturn(StatusCode::notFound);
         $response
             ->expects($this->never())
             ->method('body');
+        $transport
+            ->expects($this->once())
+            ->method('__invoke')
+            ->willReturn(Either::left(new ClientError(
+                $this->createMock(Request::class),
+                $response,
+            )));
 
         $this->expectException(FileNotFound::class);
 

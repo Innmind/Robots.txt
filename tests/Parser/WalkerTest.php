@@ -45,15 +45,20 @@ TXT;
         $stream = (new Walker)(Str::of($robots)->split("\n"));
 
         $this->assertInstanceOf(Sequence::class, $stream);
-        $this->assertSame(Directives::class, (string) $stream->type());
         $this->assertCount(2, $stream);
         $this->assertSame(
             $firstDirectives,
-            $stream->first()->toString(),
+            $stream->first()->match(
+                static fn($directive) => $directive->toString(),
+                static fn() => null,
+            ),
         );
         $this->assertSame(
             $secondDirectives,
-            $stream->last()->toString(),
+            $stream->last()->match(
+                static fn($directive) => $directive->toString(),
+                static fn() => null,
+            ),
         );
     }
 }
