@@ -60,7 +60,6 @@ final class Parser implements ParserInterface
             throw new FileNotFound($url->toString());
         }
 
-        /** @var Sequence<Str> */
         $lines = Sequence::defer(
             Str::class,
             (static function(Readable $robot): \Generator {
