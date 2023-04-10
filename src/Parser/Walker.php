@@ -16,6 +16,7 @@ use Innmind\Immutable\{
     Sequence,
     Pair,
     Map,
+    Predicate\Instance,
 };
 
 /**
@@ -30,7 +31,6 @@ final class Walker
      */
     public function __invoke(Sequence $lines): Sequence
     {
-        /** @var Sequence<Directives> */
         return $lines
             ->map(static function(Str $line): Str {
                 return $line
@@ -86,6 +86,7 @@ final class Walker
                     $b instanceof Disallow => $a->withDisallow($b),
                     $b instanceof CrawlDelay => $a->withCrawlDelay($b),
                 });
-            });
+            })
+            ->keep(Instance::of(Directives::class));
     }
 }
