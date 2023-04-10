@@ -3,6 +3,15 @@
     "license": "MIT",
     "description": "Robots.txt parser",
     "type": "library",
+    "authors": [
+        {
+            "name": "Baptiste Langlade",
+            "email": "baptiste.langlade@hey.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/Innmind/Robots.txt/issues"
+    },
     "autoload": {
         "psr-4": {
             "Innmind\\RobotsTxt\\": "src/"
