@@ -12,7 +12,7 @@ use Innmind\RobotsTxt\{
     UrlPattern,
 };
 use Innmind\Url\Url;
-use Innmind\Immutable\Set;
+use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
 
 class DirectivesTest extends TestCase
@@ -21,8 +21,6 @@ class DirectivesTest extends TestCase
     {
         $directives = Directives::of(
             UserAgent::of('foo'),
-            Set::of(),
-            Set::of(),
         );
 
         $this->assertTrue($directives->targets('foo'));
@@ -33,8 +31,8 @@ class DirectivesTest extends TestCase
     {
         $directives = Directives::of(
             UserAgent::of('*'),
-            Set::of(),
-            Set::of(),
+            null,
+            null,
             $delay = CrawlDelay::of(0),
         );
 
@@ -45,8 +43,6 @@ class DirectivesTest extends TestCase
 
         $directives = Directives::of(
             UserAgent::of('*'),
-            Set::of(),
-            Set::of(),
         );
 
         $this->assertNull($directives->crawlDelay()->match(
@@ -62,8 +58,8 @@ class DirectivesTest extends TestCase
     {
         $directives = Directives::of(
             UserAgent::of('*'),
-            Set::of(Allow::of(UrlPattern::of($allow))),
-            Set::of(Disallow::of(UrlPattern::of($disallow))),
+            Sequence::of(Allow::of(UrlPattern::of($allow))),
+            Sequence::of(Disallow::of(UrlPattern::of($disallow))),
         );
 
         $this->assertSame(
@@ -85,11 +81,11 @@ class DirectivesTest extends TestCase
             $expected,
             (Directives::of(
                 UserAgent::of('*'),
-                Set::of(
+                Sequence::of(
                     Allow::of(UrlPattern::of('/foo')),
                     Allow::of(UrlPattern::of('/bar')),
                 ),
-                Set::of(
+                Sequence::of(
                     Disallow::of(UrlPattern::of('/baz')),
                     Disallow::of(UrlPattern::of('/')),
                 ),
@@ -102,8 +98,6 @@ class DirectivesTest extends TestCase
     {
         $directives = Directives::of(
             UserAgent::of('*'),
-            Set::of(),
-            Set::of(),
         );
         $directives2 = $directives->withAllow(Allow::of(UrlPattern::of('/foo')));
 
@@ -123,8 +117,6 @@ class DirectivesTest extends TestCase
     {
         $directives = Directives::of(
             UserAgent::of('*'),
-            Set::of(),
-            Set::of(),
         );
         $directives2 = $directives->withDisallow(Disallow::of(UrlPattern::of('/foo')));
 
@@ -144,8 +136,6 @@ class DirectivesTest extends TestCase
     {
         $directives = Directives::of(
             UserAgent::of('*'),
-            Set::of(),
-            Set::of(),
         );
         $directives2 = $directives->withCrawlDelay(CrawlDelay::of(42));
 

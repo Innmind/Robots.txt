@@ -11,10 +11,7 @@ use Innmind\RobotsTxt\{
     UserAgent,
 };
 use Innmind\Url\Url;
-use Innmind\Immutable\{
-    Sequence,
-    Set,
-};
+use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
 
 class RobotsTxtTest extends TestCase
@@ -46,8 +43,8 @@ class RobotsTxtTest extends TestCase
             Sequence::of(
                 Directives::of(
                     UserAgent::of('Innmind'),
-                    Set::of(),
-                    Set::of(Disallow::of(UrlPattern::of('/some-file'))),
+                    null,
+                    Sequence::of(Disallow::of(UrlPattern::of('/some-file'))),
                 ),
             ),
         );
@@ -64,13 +61,11 @@ class RobotsTxtTest extends TestCase
             Sequence::of(
                 Directives::of(
                     UserAgent::of('foo'),
-                    Set::of(),
-                    Set::of(),
                 ),
                 Directives::of(
                     UserAgent::of('foo'),
-                    Set::of(),
-                    Set::of(Disallow::of(UrlPattern::of('/robots.txt'))),
+                    null,
+                    Sequence::of(Disallow::of(UrlPattern::of('/robots.txt'))),
                 ),
             ),
         );
@@ -85,13 +80,9 @@ class RobotsTxtTest extends TestCase
             Sequence::of(
                 Directives::of(
                     UserAgent::of('foo'),
-                    Set::of(),
-                    Set::of(),
                 ),
                 Directives::of(
                     UserAgent::of('bar'),
-                    Set::of(),
-                    Set::of(),
                 ),
             ),
         );

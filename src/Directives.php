@@ -6,7 +6,6 @@ namespace Innmind\RobotsTxt;
 use Innmind\Filesystem\File\Content;
 use Innmind\Url\Url;
 use Innmind\Immutable\{
-    Set,
     Str,
     Maybe,
     Sequence,
@@ -18,22 +17,22 @@ use Innmind\Immutable\{
 final class Directives
 {
     private UserAgent $userAgent;
-    /** @var Set<Allow> */
-    private Set $allow;
-    /** @var Set<Disallow> */
-    private Set $disallow;
+    /** @var Sequence<Allow> */
+    private Sequence $allow;
+    /** @var Sequence<Disallow> */
+    private Sequence $disallow;
     /** @var Maybe<CrawlDelay> */
     private Maybe $crawlDelay;
 
     /**
-     * @param Set<Allow> $allow
-     * @param Set<Disallow> $disallow
+     * @param Sequence<Allow> $allow
+     * @param Sequence<Disallow> $disallow
      * @param Maybe<CrawlDelay> $crawlDelay
      */
     private function __construct(
         UserAgent $userAgent,
-        Set $allow,
-        Set $disallow,
+        Sequence $allow,
+        Sequence $disallow,
         Maybe $crawlDelay,
     ) {
         $this->userAgent = $userAgent;
@@ -45,19 +44,19 @@ final class Directives
     /**
      * @psalm-pure
      *
-     * @param Set<Allow> $allow
-     * @param Set<Disallow> $disallow
+     * @param Sequence<Allow> $allow
+     * @param Sequence<Disallow> $disallow
      */
     public static function of(
         UserAgent $userAgent,
-        Set $allow = null,
-        Set $disallow = null,
+        Sequence $allow = null,
+        Sequence $disallow = null,
         CrawlDelay $crawlDelay = null,
     ): self {
         return new self(
             $userAgent,
-            $allow ?? Set::of(),
-            $disallow ?? Set::of(),
+            $allow ?? Sequence::of(),
+            $disallow ?? Sequence::of(),
             Maybe::of($crawlDelay),
         );
     }
@@ -130,7 +129,6 @@ final class Directives
             ->append(
                 $this
                     ->allow
-                    ->sort(static fn($a, $b) => $b <=> $a)
                     ->map(static fn($allow) => $allow->toString())
                     ->map(Str::of(...))
                     ->map(Content\Line::of(...)),
@@ -138,7 +136,6 @@ final class Directives
             ->append(
                 $this
                     ->disallow
-                    ->sort(static fn($a, $b) => $b <=> $a)
                     ->map(static fn($disallow) => $disallow->toString())
                     ->map(Str::of(...))
                     ->map(Content\Line::of(...)),
