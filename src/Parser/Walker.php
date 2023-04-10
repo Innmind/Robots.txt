@@ -14,7 +14,6 @@ use Innmind\RobotsTxt\{
 use Innmind\Immutable\{
     Str,
     Sequence,
-    Set,
     Pair,
     Map,
 };
@@ -24,18 +23,6 @@ use Innmind\Immutable\{
  */
 final class Walker
 {
-    private Set $supportedKeys;
-
-    public function __construct()
-    {
-        $this->supportedKeys = Set::strings(
-            'user-agent',
-            'allow',
-            'disallow',
-            'crawl-delay',
-        );
-    }
-
     /**
      * @param Sequence<Str> $lines
      *
@@ -60,11 +47,16 @@ final class Walker
                 )),
                 static fn() => Sequence::of(),
             ))
-            ->filter(function(Pair $line): bool {
-                return $this->supportedKeys->contains($line->key()->toString());
-            })
-            ->map(function(Pair $directive): object {
-                return $this->transformLineToObject($directive);
+            ->flatMap(static fn($directive) => match ($directive->key()->toString()) {
+                'user-agent' => Sequence::of(UserAgent::of($directive->value()->toString())),
+                'allow' => Sequence::of(Allow::of(
+                    UrlPattern::of($directive->value()->toString()),
+                )),
+                'disallow' => Sequence::of(Disallow::of(
+                    UrlPattern::of($directive->value()->toString()),
+                )),
+                'crawl-delay' => Sequence::of(CrawlDelay::of((int) $directive->value()->toString())),
+                default => Sequence::of(),
             })
             ->aggregate(static function(UserAgent|Allow|Disallow|CrawlDelay $a, $b) {
                 if ($a instanceof UserAgent && $b instanceof UserAgent) {
@@ -92,24 +84,5 @@ final class Walker
                     $b instanceof CrawlDelay => $a->withCrawlDelay($b),
                 });
             });
-    }
-
-    /**
-     * @param Pair<Str, Str> $directive
-     *
-     * @return UserAgent|Allow|Disallow|CrawlDelay
-     */
-    private function transformLineToObject(Pair $directive): object
-    {
-        return match ($directive->key()->toString()) {
-            'user-agent' => UserAgent::of($directive->value()->toString()),
-            'allow' => Allow::of(
-                UrlPattern::of($directive->value()->toString()),
-            ),
-            'disallow' => Disallow::of(
-                UrlPattern::of($directive->value()->toString()),
-            ),
-            'crawl-delay' => CrawlDelay::of((int) $directive->value()->toString()),
-        };
     }
 }
