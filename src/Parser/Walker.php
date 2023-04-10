@@ -55,7 +55,10 @@ final class Walker
                 'disallow' => Sequence::of(Disallow::of(
                     UrlPattern::of($directive->value()->toString()),
                 )),
-                'crawl-delay' => Sequence::of(CrawlDelay::of((int) $directive->value()->toString())),
+                'crawl-delay' => CrawlDelay::maybe($directive->value()->toString())->match(
+                    static fn($delay) => Sequence::of($delay),
+                    static fn() => Sequence::of(),
+                ),
                 default => Sequence::of(),
             })
             ->aggregate(static function(UserAgent|Allow|Disallow|CrawlDelay $a, $b) {

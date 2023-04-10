@@ -3,10 +3,7 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\RobotsTxt;
 
-use Innmind\RobotsTxt\{
-    CrawlDelay,
-    Exception\DomainException,
-};
+use Innmind\RobotsTxt\CrawlDelay;
 use PHPUnit\Framework\TestCase;
 
 class CrawlDelayTest extends TestCase
@@ -26,10 +23,11 @@ class CrawlDelayTest extends TestCase
         );
     }
 
-    public function testThrowWhenNegativeDelay()
+    public function testReturnNothingWhenNegativeDelay()
     {
-        $this->expectException(DomainException::class);
-
-        CrawlDelay::of(-1);
+        $this->assertNull(CrawlDelay::maybe('-1')->match(
+            static fn($delay) => $delay,
+            static fn() => null,
+        ));
     }
 }
