@@ -14,6 +14,7 @@ use Innmind\Url\Url;
 use Innmind\Immutable\{
     Set,
     Str,
+    Maybe,
 };
 
 final class Directives implements DirectivesInterface
@@ -23,7 +24,8 @@ final class Directives implements DirectivesInterface
     private Set $allow;
     /** @var Set<Disallow> */
     private Set $disallow;
-    private ?CrawlDelay $crawlDelay = null;
+    /** @var Maybe<CrawlDelay> */
+    private Maybe $crawlDelay;
     private ?string $string = null;
 
     /**
@@ -39,7 +41,7 @@ final class Directives implements DirectivesInterface
         $this->userAgent = $userAgent;
         $this->allow = $allow;
         $this->disallow = $disallow;
-        $this->crawlDelay = $crawlDelay;
+        $this->crawlDelay = Maybe::of($crawlDelay);
     }
 
     public function withAllow(Allow $allow): self
@@ -48,7 +50,10 @@ final class Directives implements DirectivesInterface
             $this->userAgent,
             ($this->allow)($allow),
             $this->disallow,
-            $this->crawlDelay,
+            $this->crawlDelay->match(
+                static fn($delay) => $delay,
+                static fn() => null,
+            ),
         );
     }
 
@@ -58,7 +63,10 @@ final class Directives implements DirectivesInterface
             $this->userAgent,
             $this->allow,
             ($this->disallow)($disallow),
-            $this->crawlDelay,
+            $this->crawlDelay->match(
+                static fn($delay) => $delay,
+                static fn() => null,
+            ),
         );
     }
 
@@ -94,17 +102,11 @@ final class Directives implements DirectivesInterface
     }
 
     /**
-     * @psalm-suppress InvalidNullableReturnType
+     * @return Maybe<CrawlDelay>
      */
-    public function crawlDelay(): CrawlDelay
+    public function crawlDelay(): Maybe
     {
-        /** @psalm-suppress NullableReturnStatement */
         return $this->crawlDelay;
-    }
-
-    public function hasCrawlDelay(): bool
-    {
-        return $this->crawlDelay instanceof CrawlDelay;
     }
 
     public function toString(): string
@@ -131,9 +133,10 @@ final class Directives implements DirectivesInterface
             $string .= Str::of("\n")->join($disallow)->prepend("\n")->toString();
         }
 
-        if ($this->crawlDelay) {
-            $string .= "\n".$this->crawlDelay->toString();
-        }
+        $string .= $this->crawlDelay->match(
+            static fn($delay) => "\n".$delay->toString(),
+            static fn() => '',
+        );
 
         return $this->string = $string;
     }

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Innmind\RobotsTxt;
 
 use Innmind\Url\Url;
+use Innmind\Immutable\Maybe;
 
 interface Directives
 {
@@ -12,8 +13,9 @@ interface Directives
 
     /**
      * Delay in seconds
+     *
+     * @return Maybe<CrawlDelay>
      */
-    public function crawlDelay(): CrawlDelay;
-    public function hasCrawlDelay(): bool;
+    public function crawlDelay(): Maybe;
     public function toString(): string;
 }

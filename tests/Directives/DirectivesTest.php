@@ -47,24 +47,6 @@ class DirectivesTest extends TestCase
         $this->assertFalse($directives->targets('foo'));
     }
 
-    public function testHasCrawlDelay()
-    {
-        $directives = new Directives(
-            $this->createMock(UserAgent::class),
-            Set::of(),
-            Set::of(),
-        );
-        $this->assertFalse($directives->hasCrawlDelay());
-
-        $directives = new Directives(
-            $this->createMock(UserAgent::class),
-            Set::of(),
-            Set::of(),
-            new CrawlDelay(0),
-        );
-        $this->assertTrue($directives->hasCrawlDelay());
-    }
-
     public function testCrawlDelay()
     {
         $directives = new Directives(
@@ -74,7 +56,21 @@ class DirectivesTest extends TestCase
             $delay = new CrawlDelay(0),
         );
 
-        $this->assertSame($delay, $directives->crawlDelay());
+        $this->assertSame($delay, $directives->crawlDelay()->match(
+            static fn($delay) => $delay,
+            static fn() => null,
+        ));
+
+        $directives = new Directives(
+            $userAgent = $this->createMock(UserAgent::class),
+            Set::of(),
+            Set::of(),
+        );
+
+        $this->assertNull($directives->crawlDelay()->match(
+            static fn($delay) => $delay,
+            static fn() => null,
+        ));
     }
 
     /**
