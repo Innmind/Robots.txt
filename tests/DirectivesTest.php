@@ -94,7 +94,7 @@ class DirectivesTest extends TestCase
                     Disallow::of(UrlPattern::of('/')),
                 ),
                 CrawlDelay::of(10),
-            ))->toString(),
+            ))->asContent()->toString(),
         );
     }
 
@@ -111,11 +111,11 @@ class DirectivesTest extends TestCase
         $this->assertNotSame($directives, $directives2);
         $this->assertSame(
             'User-agent: *',
-            $directives->toString(),
+            $directives->asContent()->toString(),
         );
         $this->assertSame(
             "User-agent: *\nAllow: /foo",
-            $directives2->toString(),
+            $directives2->asContent()->toString(),
         );
     }
 
@@ -132,11 +132,11 @@ class DirectivesTest extends TestCase
         $this->assertNotSame($directives, $directives2);
         $this->assertSame(
             'User-agent: *',
-            $directives->toString(),
+            $directives->asContent()->toString(),
         );
         $this->assertSame(
             "User-agent: *\nDisallow: /foo",
-            $directives2->toString(),
+            $directives2->asContent()->toString(),
         );
     }
 
@@ -153,11 +153,11 @@ class DirectivesTest extends TestCase
         $this->assertNotSame($directives, $directives2);
         $this->assertSame(
             'User-agent: *',
-            $directives->toString(),
+            $directives->asContent()->toString(),
         );
         $this->assertSame(
             "User-agent: *\nCrawl-delay: 42",
-            $directives2->toString(),
+            $directives2->asContent()->toString(),
         );
     }
 

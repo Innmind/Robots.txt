@@ -3,10 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\RobotsTxt;
 
+use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\{
     Sequence,
     Str,
-    Monoid\Concat,
 };
 
 /**
@@ -56,13 +56,13 @@ final class UserAgent
             );
     }
 
-    public function toString(): string
+    public function asContent(): Content
     {
-        return $this
-            ->agents
-            ->map(static fn($agent) => $agent->prepend('User-agent: ')->append("\n"))
-            ->fold(new Concat)
-            ->dropEnd(1)
-            ->toString();
+        return Content\Lines::of(
+            $this
+                ->agents
+                ->map(static fn($agent) => $agent->prepend('User-agent: '))
+                ->map(Content\Line::of(...)),
+        );
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\RobotsTxt;
 
+use Innmind\Filesystem\File\Content;
 use Innmind\Url\Url;
 use Innmind\Immutable\{
     Sequence,
@@ -51,12 +52,13 @@ final class RobotsTxt
             );
     }
 
-    public function toString(): string
+    public function asContent(): Content
     {
-        $directives = $this->directives->map(
-            static fn(Directives $directives): string => $directives->toString(),
+        return Content\Lines::of(
+            $this
+                ->directives
+                ->map(static fn($directive) => $directive->asContent())
+                ->flatMap(static fn($content) => $content->lines()->add(Content\Line::of(Str::of('')))),
         );
-
-        return Str::of("\n\n")->join($directives)->toString();
     }
 }

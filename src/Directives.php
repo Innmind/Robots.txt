@@ -3,11 +3,13 @@ declare(strict_types = 1);
 
 namespace Innmind\RobotsTxt;
 
+use Innmind\Filesystem\File\Content;
 use Innmind\Url\Url;
 use Innmind\Immutable\{
     Set,
     Str,
     Maybe,
+    Sequence,
 };
 
 /**
@@ -114,32 +116,41 @@ final class Directives
         return $this->crawlDelay;
     }
 
-    public function toString(): string
+    public function asContent(): Content
     {
-        $string = $this->userAgent->toString();
-
-        if ($this->allow->size() > 0) {
-            $allow = $this->allow->map(
-                static fn(Allow $allow): string => $allow->toString(),
+        $lines = $this
+            ->userAgent
+            ->asContent()
+            ->lines()
+            ->append(
+                $this
+                    ->allow
+                    ->sort(static fn($a, $b) => $b <=> $a)
+                    ->map(static fn($allow) => $allow->toString())
+                    ->map(Str::of(...))
+                    ->map(Content\Line::of(...)),
+            )
+            ->append(
+                $this
+                    ->disallow
+                    ->sort(static fn($a, $b) => $b <=> $a)
+                    ->map(static fn($disallow) => $disallow->toString())
+                    ->map(Str::of(...))
+                    ->map(Content\Line::of(...)),
+            )
+            ->append(
+                $this
+                    ->crawlDelay
+                    ->map(static fn($delay) => $delay->toString())
+                    ->map(Str::of(...))
+                    ->map(Content\Line::of(...))
+                    ->match(
+                        static fn($line) => Sequence::of($line),
+                        static fn() => Sequence::of(),
+                    ),
             );
 
-            $string .= Str::of("\n")->join($allow)->prepend("\n")->toString();
-        }
-
-        if ($this->disallow->size() > 0) {
-            $disallow = $this->disallow->map(
-                static fn(Disallow $disallow): string => $disallow->toString(),
-            );
-
-            $string .= Str::of("\n")->join($disallow)->prepend("\n")->toString();
-        }
-
-        $string .= $this->crawlDelay->match(
-            static fn($delay) => "\n".$delay->toString(),
-            static fn() => '',
-        );
-
-        return $string;
+        return Content\Lines::of($lines);
     }
 
     private function allows(string $url): bool

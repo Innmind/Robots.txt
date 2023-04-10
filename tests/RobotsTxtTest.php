@@ -96,6 +96,9 @@ class RobotsTxtTest extends TestCase
             ),
         );
 
-        $this->assertSame('User-agent: foo'."\n\n".'User-agent: bar', $robots->toString());
+        $this->assertSame(
+            'User-agent: foo'."\n\n".'User-agent: bar'."\n",
+            $robots->asContent()->toString(),
+        );
     }
 }

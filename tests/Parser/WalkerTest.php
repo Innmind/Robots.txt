@@ -49,14 +49,14 @@ TXT;
         $this->assertSame(
             $firstDirectives,
             $stream->first()->match(
-                static fn($directive) => $directive->toString(),
+                static fn($directive) => $directive->asContent()->toString(),
                 static fn() => null,
             ),
         );
         $this->assertSame(
             $secondDirectives,
             $stream->last()->match(
-                static fn($directive) => $directive->toString(),
+                static fn($directive) => $directive->asContent()->toString(),
                 static fn() => null,
             ),
         );

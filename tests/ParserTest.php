@@ -83,13 +83,13 @@ TXT
         $expected .= ''."\n";
         $expected .= 'User-agent: *'."\n";
         $expected .= 'Disallow: '."\n";
-        $expected .= 'Crawl-delay: 20';
+        $expected .= 'Crawl-delay: 20'."\n";
 
         $robots = $parse($url);
 
         $this->assertInstanceOf(RobotsTxt::class, $robots);
         $this->assertSame($url, $robots->url());
-        $this->assertSame($expected, $robots->toString());
+        $this->assertSame($expected, $robots->asContent()->toString());
     }
 
     public function testThrowWhenRequestNotFulfilled()

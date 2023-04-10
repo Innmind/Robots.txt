@@ -35,11 +35,11 @@ class UserAgentTest extends TestCase
     {
         $this->assertSame(
             'User-agent: GoogleBot',
-            UserAgent::of('GoogleBot')->toString(),
+            UserAgent::of('GoogleBot')->asContent()->toString(),
         );
         $this->assertSame(
             'User-agent: Innmind'."\n".'User-agent: GoogleBot',
-            UserAgent::of('Innmind')->and('GoogleBot')->toString(),
+            UserAgent::of('Innmind')->and('GoogleBot')->asContent()->toString(),
         );
     }
 
