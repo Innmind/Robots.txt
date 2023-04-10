@@ -20,6 +20,9 @@ use Innmind\Immutable\{
     Map,
 };
 
+/**
+ * @internal
+ */
 final class Walker
 {
     private Set $supportedKeys;
