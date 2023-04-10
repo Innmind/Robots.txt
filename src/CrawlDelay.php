@@ -5,6 +5,9 @@ namespace Innmind\RobotsTxt;
 
 use Innmind\RobotsTxt\Exception\DomainException;
 
+/**
+ * @psalm-immutable
+ */
 final class CrawlDelay
 {
     private int $value;
@@ -18,6 +21,9 @@ final class CrawlDelay
         $this->value = $value;
     }
 
+    /**
+     * @psalm-pure
+     */
     public static function of(int $value): self
     {
         return new self($value);

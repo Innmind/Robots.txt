@@ -9,6 +9,9 @@ use Innmind\Immutable\{
     Str,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class RobotsTxt
 {
     private Url $url;

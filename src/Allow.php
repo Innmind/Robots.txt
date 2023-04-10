@@ -3,6 +3,9 @@ declare(strict_types = 1);
 
 namespace Innmind\RobotsTxt;
 
+/**
+ * @psalm-immutable
+ */
 final class Allow
 {
     private UrlPattern $pattern;
@@ -12,6 +15,9 @@ final class Allow
         $this->pattern = $pattern;
     }
 
+    /**
+     * @psalm-pure
+     */
     public static function of(UrlPattern $pattern): self
     {
         return new self($pattern);

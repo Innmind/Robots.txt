@@ -10,6 +10,9 @@ use Innmind\Immutable\{
     Maybe,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class Directives
 {
     private UserAgent $userAgent;
@@ -19,7 +22,6 @@ final class Directives
     private Set $disallow;
     /** @var Maybe<CrawlDelay> */
     private Maybe $crawlDelay;
-    private ?string $string = null;
 
     /**
      * @param Set<Allow> $allow
@@ -39,6 +41,8 @@ final class Directives
     }
 
     /**
+     * @psalm-pure
+     *
      * @param Set<Allow> $allow
      * @param Set<Disallow> $disallow
      */
@@ -112,10 +116,6 @@ final class Directives
 
     public function toString(): string
     {
-        if ($this->string !== null) {
-            return $this->string;
-        }
-
         $string = $this->userAgent->toString();
 
         if ($this->allow->size() > 0) {
@@ -139,7 +139,7 @@ final class Directives
             static fn() => '',
         );
 
-        return $this->string = $string;
+        return $string;
     }
 
     private function allows(string $url): bool

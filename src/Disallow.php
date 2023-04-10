@@ -5,6 +5,9 @@ namespace Innmind\RobotsTxt;
 
 use Innmind\Immutable\Str;
 
+/**
+ * @psalm-immutable
+ */
 final class Disallow
 {
     private UrlPattern $pattern;
@@ -14,6 +17,9 @@ final class Disallow
         $this->pattern = $pattern;
     }
 
+    /**
+     * @psalm-pure
+     */
     public static function of(UrlPattern $pattern): self
     {
         return new self($pattern);

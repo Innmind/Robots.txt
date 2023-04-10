@@ -9,6 +9,9 @@ use Innmind\Immutable\{
     Monoid\Concat,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class UserAgent
 {
     /** @var Sequence<Str> */
@@ -22,6 +25,9 @@ final class UserAgent
         $this->agents = $agents;
     }
 
+    /**
+     * @psalm-pure
+     */
     public static function of(string $agent): self
     {
         return new self(Sequence::of(Str::of($agent)));

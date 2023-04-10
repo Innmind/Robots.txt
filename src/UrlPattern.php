@@ -9,6 +9,9 @@ use Innmind\Immutable\{
     Exception\InvalidRegex,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class UrlPattern
 {
     private string $pattern;
@@ -18,6 +21,9 @@ final class UrlPattern
         $this->pattern = $pattern;
     }
 
+    /**
+     * @psalm-pure
+     */
     public static function of(string $pattern): self
     {
         return new self($pattern);
