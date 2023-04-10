@@ -95,25 +95,16 @@ final class Walker
      */
     private function transformLineToObject(Pair $directive): object
     {
-        switch ($directive->key()->toString()) {
-            case 'user-agent':
-                return UserAgent::of($directive->value()->toString());
-
-            case 'allow':
-                return Allow::of(
-                    UrlPattern::of($directive->value()->toString()),
-                );
-
-            case 'disallow':
-                return Disallow::of(
-                    UrlPattern::of($directive->value()->toString()),
-                );
-
-            case 'crawl-delay':
-                return CrawlDelay::of((int) $directive->value()->toString());
-        }
-
-        throw new LogicException("Unknown directive '{$directive->key()->toString()}'");
+        return match ($directive->key()->toString()) {
+            'user-agent' => UserAgent::of($directive->value()->toString()),
+            'allow' => Allow::of(
+                UrlPattern::of($directive->value()->toString()),
+            ),
+            'disallow' => Disallow::of(
+                UrlPattern::of($directive->value()->toString()),
+            ),
+            'crawl-delay' => CrawlDelay::of((int) $directive->value()->toString()),
+        };
     }
 
     /**
