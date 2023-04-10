@@ -20,24 +20,19 @@ class DirectivesTest extends TestCase
     public function testTargets()
     {
         $directives = Directives::of(
-            $userAgent = $this->createMock(UserAgent::class),
+            UserAgent::of('foo'),
             Set::of(),
             Set::of(),
         );
-        $userAgent
-            ->expects($this->exactly(2))
-            ->method('matches')
-            ->with('foo')
-            ->will($this->onConsecutiveCalls(true, false));
 
         $this->assertTrue($directives->targets('foo'));
-        $this->assertFalse($directives->targets('foo'));
+        $this->assertFalse($directives->targets('bar'));
     }
 
     public function testCrawlDelay()
     {
         $directives = Directives::of(
-            $userAgent = $this->createMock(UserAgent::class),
+            UserAgent::of('*'),
             Set::of(),
             Set::of(),
             $delay = CrawlDelay::of(0),
@@ -49,7 +44,7 @@ class DirectivesTest extends TestCase
         ));
 
         $directives = Directives::of(
-            $userAgent = $this->createMock(UserAgent::class),
+            UserAgent::of('*'),
             Set::of(),
             Set::of(),
         );
@@ -66,7 +61,7 @@ class DirectivesTest extends TestCase
     public function testDisallows(bool $expected, string $url, string $allow, string $disallow)
     {
         $directives = Directives::of(
-            $this->createMock(UserAgent::class),
+            UserAgent::of('*'),
             Set::of(Allow::of(UrlPattern::of($allow))),
             Set::of(Disallow::of(UrlPattern::of($disallow))),
         );
@@ -89,7 +84,7 @@ class DirectivesTest extends TestCase
         $this->assertSame(
             $expected,
             (Directives::of(
-                new UserAgent\UserAgent('*'),
+                UserAgent::of('*'),
                 Set::of(
                     Allow::of(UrlPattern::of('/foo')),
                     Allow::of(UrlPattern::of('/bar')),
@@ -106,7 +101,7 @@ class DirectivesTest extends TestCase
     public function testWithAllow()
     {
         $directives = Directives::of(
-            new UserAgent\UserAgent('*'),
+            UserAgent::of('*'),
             Set::of(),
             Set::of(),
         );
@@ -127,7 +122,7 @@ class DirectivesTest extends TestCase
     public function testWithDisallow()
     {
         $directives = Directives::of(
-            new UserAgent\UserAgent('*'),
+            UserAgent::of('*'),
             Set::of(),
             Set::of(),
         );
@@ -148,7 +143,7 @@ class DirectivesTest extends TestCase
     public function testWithCrawlDelay()
     {
         $directives = Directives::of(
-            new UserAgent\UserAgent('*'),
+            UserAgent::of('*'),
             Set::of(),
             Set::of(),
         );

@@ -8,7 +8,7 @@ use Innmind\RobotsTxt\{
     Directives,
     Disallow,
     UrlPattern,
-    UserAgent\UserAgent,
+    UserAgent,
 };
 use Innmind\Url\Url;
 use Innmind\Immutable\{
@@ -45,7 +45,7 @@ class RobotsTxtTest extends TestCase
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
                 Directives::of(
-                    new UserAgent('Innmind'),
+                    UserAgent::of('Innmind'),
                     Set::of(),
                     Set::of(Disallow::of(UrlPattern::of('/some-file'))),
                 ),
@@ -63,12 +63,12 @@ class RobotsTxtTest extends TestCase
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
                 Directives::of(
-                    new UserAgent('foo'),
+                    UserAgent::of('foo'),
                     Set::of(),
                     Set::of(),
                 ),
                 Directives::of(
-                    new UserAgent('foo'),
+                    UserAgent::of('foo'),
                     Set::of(),
                     Set::of(Disallow::of(UrlPattern::of('/robots.txt'))),
                 ),
@@ -84,12 +84,12 @@ class RobotsTxtTest extends TestCase
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
                 Directives::of(
-                    new UserAgent('foo'),
+                    UserAgent::of('foo'),
                     Set::of(),
                     Set::of(),
                 ),
                 Directives::of(
-                    new UserAgent('bar'),
+                    UserAgent::of('bar'),
                     Set::of(),
                     Set::of(),
                 ),

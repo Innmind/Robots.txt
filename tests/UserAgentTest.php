@@ -1,32 +1,16 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\RobotsTxt\UserAgent;
+namespace Tests\Innmind\RobotsTxt;
 
 use Innmind\RobotsTxt\{
-    UserAgent\UserAgent,
-    UserAgent as UserAgentInterface,
+    UserAgent,
     Exception\DomainException,
 };
 use PHPUnit\Framework\TestCase;
 
 class UserAgentTest extends TestCase
 {
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            UserAgentInterface::class,
-            new UserAgent('*'),
-        );
-    }
-
-    public function testThrowWhenEmptyUserAgent()
-    {
-        $this->expectException(DomainException::class);
-
-        new UserAgent('');
-    }
-
     /**
      * @dataProvider cases
      */
@@ -34,15 +18,28 @@ class UserAgentTest extends TestCase
     {
         $this->assertSame(
             $expected,
-            (new UserAgent($pattern))->matches($userAgent),
+            UserAgent::of($pattern)->matches($userAgent),
         );
+    }
+
+    public function testMatchesWithMultipleAgents()
+    {
+        $userAgent = UserAgent::of('Innmind')->and('GoogleBot');
+
+        $this->assertTrue($userAgent->matches('Innmind'));
+        $this->assertTrue($userAgent->matches('GoogleBot'));
+        $this->assertFalse($userAgent->matches('Unknown'));
     }
 
     public function testStringCast()
     {
         $this->assertSame(
             'User-agent: GoogleBot',
-            (new UserAgent('GoogleBot'))->toString(),
+            UserAgent::of('GoogleBot')->toString(),
+        );
+        $this->assertSame(
+            'User-agent: Innmind'."\n".'User-agent: GoogleBot',
+            UserAgent::of('Innmind')->and('GoogleBot')->toString(),
         );
     }
 
