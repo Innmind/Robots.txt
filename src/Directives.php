@@ -50,11 +50,16 @@ final class Directives
      */
     public static function of(
         UserAgent $userAgent,
-        Set $allow,
-        Set $disallow,
+        Set $allow = null,
+        Set $disallow = null,
         CrawlDelay $crawlDelay = null,
     ): self {
-        return new self($userAgent, $allow, $disallow, Maybe::of($crawlDelay));
+        return new self(
+            $userAgent,
+            $allow ?? Set::of(),
+            $disallow ?? Set::of(),
+            Maybe::of($crawlDelay),
+        );
     }
 
     public function withAllow(Allow $allow): self
