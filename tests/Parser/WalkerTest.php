@@ -7,6 +7,7 @@ use Innmind\RobotsTxt\{
     Parser\Walker,
     Directives,
 };
+use Innmind\Filesystem\File\Content\Line;
 use Innmind\Immutable\{
     Str,
     Sequence,
@@ -42,18 +43,23 @@ TXT;
         $secondDirectives .= 'Disallow: '."\n";
         $secondDirectives .= 'Crawl-delay: 20';
 
-        $stream = (new Walker)(Str::of($robots)->split("\n"));
+        $stream = Walker::of()(Str::of($robots)->split("\n")->map(Line::of(...)));
 
         $this->assertInstanceOf(Sequence::class, $stream);
-        $this->assertSame(Directives::class, (string) $stream->type());
         $this->assertCount(2, $stream);
         $this->assertSame(
             $firstDirectives,
-            $stream->first()->toString(),
+            $stream->first()->match(
+                static fn($directive) => $directive->asContent()->toString(),
+                static fn() => null,
+            ),
         );
         $this->assertSame(
             $secondDirectives,
-            $stream->last()->toString(),
+            $stream->last()->match(
+                static fn($directive) => $directive->asContent()->toString(),
+                static fn() => null,
+            ),
         );
     }
 }

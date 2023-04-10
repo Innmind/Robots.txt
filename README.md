@@ -20,11 +20,14 @@ use Innmind\OperatingSystem\Factory;
 use Innmind\Url\Url;
 
 $os = Factory::build();
-$parse = new Parser(
+$parse = Parser::of(
     $os->remote()->http(),
     'My user agent',
 );
-$robots = $parse(Url::of('https://github.com/robots.txt'));
+$robots = $parse(Url::of('https://github.com/robots.txt'))->match(
+    static fn($robots) => $robots,
+    static fn() => throw new \RuntimeException('robots.txt not found'),
+);
 $robots->disallows('My user agent', Url::of('/humans.txt')); //false
 $robots->disallows('My user agent', Url::of('/any/other/url')); //true
 ```
