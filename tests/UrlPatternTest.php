@@ -12,7 +12,7 @@ class UrlPatternTest extends TestCase
     {
         $this->assertSame(
             '*',
-            (new UrlPattern('*'))->toString(),
+            UrlPattern::of('*')->toString(),
         );
     }
 
@@ -23,7 +23,7 @@ class UrlPatternTest extends TestCase
     {
         $this->assertSame(
             $expected,
-            (new UrlPattern($pattern))->matches($url),
+            UrlPattern::of($pattern)->matches($url),
         );
     }
 

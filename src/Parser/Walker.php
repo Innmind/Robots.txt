@@ -100,17 +100,17 @@ final class Walker
                 return new UserAgent\UserAgent($directive->value()->toString());
 
             case 'allow':
-                return new Allow(
-                    new UrlPattern($directive->value()->toString()),
+                return Allow::of(
+                    UrlPattern::of($directive->value()->toString()),
                 );
 
             case 'disallow':
-                return new Disallow(
-                    new UrlPattern($directive->value()->toString()),
+                return Disallow::of(
+                    UrlPattern::of($directive->value()->toString()),
                 );
 
             case 'crawl-delay':
-                return new CrawlDelay((int) $directive->value()->toString());
+                return CrawlDelay::of((int) $directive->value()->toString());
         }
 
         throw new LogicException("Unknown directive '{$directive->key()->toString()}'");
@@ -168,7 +168,7 @@ final class Walker
             $directive = $directive;
 
             return ($directives)(
-                new Directives(
+                Directives::of(
                     $directive,
                     Set::of(),
                     Set::of(),

@@ -19,7 +19,7 @@ class DirectivesTest extends TestCase
 {
     public function testTargets()
     {
-        $directives = new Directives(
+        $directives = Directives::of(
             $userAgent = $this->createMock(UserAgent::class),
             Set::of(),
             Set::of(),
@@ -36,11 +36,11 @@ class DirectivesTest extends TestCase
 
     public function testCrawlDelay()
     {
-        $directives = new Directives(
+        $directives = Directives::of(
             $userAgent = $this->createMock(UserAgent::class),
             Set::of(),
             Set::of(),
-            $delay = new CrawlDelay(0),
+            $delay = CrawlDelay::of(0),
         );
 
         $this->assertSame($delay, $directives->crawlDelay()->match(
@@ -48,7 +48,7 @@ class DirectivesTest extends TestCase
             static fn() => null,
         ));
 
-        $directives = new Directives(
+        $directives = Directives::of(
             $userAgent = $this->createMock(UserAgent::class),
             Set::of(),
             Set::of(),
@@ -65,10 +65,10 @@ class DirectivesTest extends TestCase
      */
     public function testDisallows(bool $expected, string $url, string $allow, string $disallow)
     {
-        $directives = new Directives(
+        $directives = Directives::of(
             $this->createMock(UserAgent::class),
-            Set::of(new Allow(new UrlPattern($allow))),
-            Set::of(new Disallow(new UrlPattern($disallow))),
+            Set::of(Allow::of(UrlPattern::of($allow))),
+            Set::of(Disallow::of(UrlPattern::of($disallow))),
         );
 
         $this->assertSame(
@@ -88,29 +88,29 @@ class DirectivesTest extends TestCase
 
         $this->assertSame(
             $expected,
-            (new Directives(
+            (Directives::of(
                 new UserAgent\UserAgent('*'),
                 Set::of(
-                    new Allow(new UrlPattern('/foo')),
-                    new Allow(new UrlPattern('/bar')),
+                    Allow::of(UrlPattern::of('/foo')),
+                    Allow::of(UrlPattern::of('/bar')),
                 ),
                 Set::of(
-                    new Disallow(new UrlPattern('/baz')),
-                    new Disallow(new UrlPattern('/')),
+                    Disallow::of(UrlPattern::of('/baz')),
+                    Disallow::of(UrlPattern::of('/')),
                 ),
-                new CrawlDelay(10),
+                CrawlDelay::of(10),
             ))->toString(),
         );
     }
 
     public function testWithAllow()
     {
-        $directives = new Directives(
+        $directives = Directives::of(
             new UserAgent\UserAgent('*'),
             Set::of(),
             Set::of(),
         );
-        $directives2 = $directives->withAllow(new Allow(new UrlPattern('/foo')));
+        $directives2 = $directives->withAllow(Allow::of(UrlPattern::of('/foo')));
 
         $this->assertInstanceOf(Directives::class, $directives2);
         $this->assertNotSame($directives, $directives2);
@@ -126,12 +126,12 @@ class DirectivesTest extends TestCase
 
     public function testWithDisallow()
     {
-        $directives = new Directives(
+        $directives = Directives::of(
             new UserAgent\UserAgent('*'),
             Set::of(),
             Set::of(),
         );
-        $directives2 = $directives->withDisallow(new Disallow(new UrlPattern('/foo')));
+        $directives2 = $directives->withDisallow(Disallow::of(UrlPattern::of('/foo')));
 
         $this->assertInstanceOf(Directives::class, $directives2);
         $this->assertNotSame($directives, $directives2);
@@ -147,12 +147,12 @@ class DirectivesTest extends TestCase
 
     public function testWithCrawlDelay()
     {
-        $directives = new Directives(
+        $directives = Directives::of(
             new UserAgent\UserAgent('*'),
             Set::of(),
             Set::of(),
         );
-        $directives2 = $directives->withCrawlDelay(new CrawlDelay(42));
+        $directives2 = $directives->withCrawlDelay(CrawlDelay::of(42));
 
         $this->assertInstanceOf(Directives::class, $directives2);
         $this->assertNotSame($directives, $directives2);

@@ -13,7 +13,7 @@ class DisallowTest extends TestCase
 {
     public function testMatches()
     {
-        $disallow = new Disallow(new UrlPattern('/foo'));
+        $disallow = Disallow::of(UrlPattern::of('/foo'));
 
         $this->assertTrue($disallow->matches('/foo/bar'));
         $this->assertFalse($disallow->matches('/bar'));
@@ -21,7 +21,7 @@ class DisallowTest extends TestCase
 
     public function testAllowWhenEmptyPattern()
     {
-        $disallow = new Disallow(new UrlPattern(''));
+        $disallow = Disallow::of(UrlPattern::of(''));
 
         $this->assertFalse($disallow->matches('/foo'));
         $this->assertFalse($disallow->matches('/'));
@@ -31,7 +31,7 @@ class DisallowTest extends TestCase
     {
         $this->assertSame(
             'Disallow: *',
-            (new Disallow(new UrlPattern('*')))->toString(),
+            Disallow::of(UrlPattern::of('*'))->toString(),
         );
     }
 }

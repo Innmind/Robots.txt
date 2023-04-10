@@ -13,7 +13,7 @@ class CrawlDelayTest extends TestCase
 {
     public function testIntCast()
     {
-        $delay = new CrawlDelay(10);
+        $delay = CrawlDelay::of(10);
 
         $this->assertSame(10, $delay->toInt());
     }
@@ -22,7 +22,7 @@ class CrawlDelayTest extends TestCase
     {
         $this->assertSame(
             'Crawl-delay: 10',
-            (new CrawlDelay(10))->toString(),
+            CrawlDelay::of(10)->toString(),
         );
     }
 
@@ -30,6 +30,6 @@ class CrawlDelayTest extends TestCase
     {
         $this->expectException(DomainException::class);
 
-        new CrawlDelay(-1);
+        CrawlDelay::of(-1);
     }
 }

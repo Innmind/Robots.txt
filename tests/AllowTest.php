@@ -13,7 +13,7 @@ class AllowTest extends TestCase
 {
     public function testMatches()
     {
-        $allow = new Allow(new UrlPattern('/foo'));
+        $allow = Allow::of(UrlPattern::of('/foo'));
 
         $this->assertTrue($allow->matches('/foo/bar'));
         $this->assertFalse($allow->matches('/bar'));
@@ -23,7 +23,7 @@ class AllowTest extends TestCase
     {
         $this->assertSame(
             'Allow: *',
-            (new Allow(new UrlPattern('*')))->toString(),
+            Allow::of(UrlPattern::of('*'))->toString(),
         );
     }
 }

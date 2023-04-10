@@ -13,9 +13,14 @@ final class UrlPattern
 {
     private string $pattern;
 
-    public function __construct(string $pattern)
+    private function __construct(string $pattern)
     {
         $this->pattern = $pattern;
+    }
+
+    public static function of(string $pattern): self
+    {
+        return new self($pattern);
     }
 
     public function matches(string $url): bool

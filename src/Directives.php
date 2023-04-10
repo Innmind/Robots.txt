@@ -24,17 +24,31 @@ final class Directives
     /**
      * @param Set<Allow> $allow
      * @param Set<Disallow> $disallow
+     * @param Maybe<CrawlDelay> $crawlDelay
      */
-    public function __construct(
+    private function __construct(
         UserAgent $userAgent,
         Set $allow,
         Set $disallow,
-        CrawlDelay $crawlDelay = null,
+        Maybe $crawlDelay,
     ) {
         $this->userAgent = $userAgent;
         $this->allow = $allow;
         $this->disallow = $disallow;
-        $this->crawlDelay = Maybe::of($crawlDelay);
+        $this->crawlDelay = $crawlDelay;
+    }
+
+    /**
+     * @param Set<Allow> $allow
+     * @param Set<Disallow> $disallow
+     */
+    public static function of(
+        UserAgent $userAgent,
+        Set $allow,
+        Set $disallow,
+        CrawlDelay $crawlDelay = null,
+    ): self {
+        return new self($userAgent, $allow, $disallow, Maybe::of($crawlDelay));
     }
 
     public function withAllow(Allow $allow): self
@@ -43,10 +57,7 @@ final class Directives
             $this->userAgent,
             ($this->allow)($allow),
             $this->disallow,
-            $this->crawlDelay->match(
-                static fn($delay) => $delay,
-                static fn() => null,
-            ),
+            $this->crawlDelay,
         );
     }
 
@@ -56,16 +67,13 @@ final class Directives
             $this->userAgent,
             $this->allow,
             ($this->disallow)($disallow),
-            $this->crawlDelay->match(
-                static fn($delay) => $delay,
-                static fn() => null,
-            ),
+            $this->crawlDelay,
         );
     }
 
     public function withCrawlDelay(CrawlDelay $crawlDelay): self
     {
-        return new self(
+        return self::of(
             $this->userAgent,
             $this->allow,
             $this->disallow,

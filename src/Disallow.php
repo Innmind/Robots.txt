@@ -9,9 +9,14 @@ final class Disallow
 {
     private UrlPattern $pattern;
 
-    public function __construct(UrlPattern $pattern)
+    private function __construct(UrlPattern $pattern)
     {
         $this->pattern = $pattern;
+    }
+
+    public static function of(UrlPattern $pattern): self
+    {
+        return new self($pattern);
     }
 
     public function matches(string $url): bool

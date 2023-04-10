@@ -44,10 +44,10 @@ class RobotsTxtTest extends TestCase
         $robots = new RobotsTxt(
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
-                new Directives(
+                Directives::of(
                     new UserAgent('Innmind'),
                     Set::of(),
-                    Set::of(new Disallow(new UrlPattern('/some-file'))),
+                    Set::of(Disallow::of(UrlPattern::of('/some-file'))),
                 ),
             ),
         );
@@ -62,15 +62,15 @@ class RobotsTxtTest extends TestCase
         $robots = new RobotsTxt(
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
-                new Directives(
+                Directives::of(
                     new UserAgent('foo'),
                     Set::of(),
                     Set::of(),
                 ),
-                new Directives(
+                Directives::of(
                     new UserAgent('foo'),
                     Set::of(),
-                    Set::of(new Disallow(new UrlPattern('/robots.txt'))),
+                    Set::of(Disallow::of(UrlPattern::of('/robots.txt'))),
                 ),
             ),
         );
@@ -83,12 +83,12 @@ class RobotsTxtTest extends TestCase
         $robots = new RobotsTxt(
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
-                new Directives(
+                Directives::of(
                     new UserAgent('foo'),
                     Set::of(),
                     Set::of(),
                 ),
-                new Directives(
+                Directives::of(
                     new UserAgent('bar'),
                     Set::of(),
                     Set::of(),
