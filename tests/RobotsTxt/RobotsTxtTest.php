@@ -7,9 +7,15 @@ use Innmind\RobotsTxt\{
     RobotsTxt\RobotsTxt,
     RobotsTxt as RobotsTxtInterface,
     Directives,
+    Disallow,
+    UrlPattern,
+    UserAgent\UserAgent,
 };
 use Innmind\Url\Url;
-use Innmind\Immutable\Sequence;
+use Innmind\Immutable\{
+    Sequence,
+    Set,
+};
 use PHPUnit\Framework\TestCase;
 
 class RobotsTxtTest extends TestCase
@@ -50,24 +56,17 @@ class RobotsTxtTest extends TestCase
         $robots = new RobotsTxt(
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
-                $mock = $this->createMock(Directives::class),
+                new Directives(
+                    new UserAgent('Innmind'),
+                    Set::of(),
+                    Set::of(new Disallow(new UrlPattern('/some-file'))),
+                ),
             ),
         );
-        $url = Url::of('http://example.com/robots.txt');
-        $mock
-            ->expects($this->exactly(3))
-            ->method('targets')
-            ->with('foo')
-            ->will($this->onConsecutiveCalls(true, true, false));
-        $mock
-            ->expects($this->exactly(2))
-            ->method('disallows')
-            ->with($url)
-            ->will($this->onConsecutiveCalls(true, false));
 
-        $this->assertTrue($robots->disallows('foo', $url));
-        $this->assertFalse($robots->disallows('foo', $url));
-        $this->assertFalse($robots->disallows('foo', $url));
+        $this->assertTrue($robots->disallows('Innmind', Url::of('http://example.com/some-file')));
+        $this->assertFalse($robots->disallows('Innmind', Url::of('http://example.com/some-unknown-file')));
+        $this->assertFalse($robots->disallows('Unknown', Url::of('http://example.com/some-file')));
     }
 
     public function testFallbackDirectivesWhenUserAgentMatchesMultipleOnes()
@@ -75,33 +74,20 @@ class RobotsTxtTest extends TestCase
         $robots = new RobotsTxt(
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
-                $mock1 = $this->createMock(Directives::class),
-                $mock2 = $this->createMock(Directives::class),
+                new Directives(
+                    new UserAgent('foo'),
+                    Set::of(),
+                    Set::of(),
+                ),
+                new Directives(
+                    new UserAgent('foo'),
+                    Set::of(),
+                    Set::of(new Disallow(new UrlPattern('/robots.txt'))),
+                ),
             ),
         );
-        $url = Url::of('http://example.com/robots.txt');
-        $mock1
-            ->expects($this->once())
-            ->method('targets')
-            ->with('foo')
-            ->willReturn(true);
-        $mock2
-            ->expects($this->once())
-            ->method('targets')
-            ->with('foo')
-            ->willReturn(true);
-        $mock1
-            ->expects($this->once())
-            ->method('disallows')
-            ->with($url)
-            ->willReturn(false);
-        $mock2
-            ->expects($this->once())
-            ->method('disallows')
-            ->with($url)
-            ->willReturn(true);
 
-        $this->assertTrue($robots->disallows('foo', $url));
+        $this->assertTrue($robots->disallows('foo', Url::of('http://example.com/robots.txt')));
     }
 
     public function testStringCast()
@@ -109,19 +95,19 @@ class RobotsTxtTest extends TestCase
         $robots = new RobotsTxt(
             Url::of('http://example.com/robots.txt'),
             Sequence::of(
-                $mock1 = $this->createMock(Directives::class),
-                $mock2 = $this->createMock(Directives::class),
+                new Directives(
+                    new UserAgent('foo'),
+                    Set::of(),
+                    Set::of(),
+                ),
+                new Directives(
+                    new UserAgent('bar'),
+                    Set::of(),
+                    Set::of(),
+                ),
             ),
         );
-        $mock1
-            ->expects($this->once())
-            ->method('toString')
-            ->willReturn('foo');
-        $mock2
-            ->expects($this->once())
-            ->method('toString')
-            ->willReturn('bar');
 
-        $this->assertSame('foo'."\n\n".'bar', $robots->toString());
+        $this->assertSame('User-agent: foo'."\n\n".'User-agent: bar', $robots->toString());
     }
 }

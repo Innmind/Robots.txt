@@ -1,11 +1,10 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\RobotsTxt\Directives;
+namespace Tests\Innmind\RobotsTxt;
 
 use Innmind\RobotsTxt\{
-    Directives\Directives,
-    Directives as DirectivesInterface,
+    Directives,
     UserAgent,
     Allow,
     Disallow,
@@ -18,18 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 class DirectivesTest extends TestCase
 {
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            DirectivesInterface::class,
-            new Directives(
-                $this->createMock(UserAgent::class),
-                Set::of(),
-                Set::of(),
-            ),
-        );
-    }
-
     public function testTargets()
     {
         $directives = new Directives(

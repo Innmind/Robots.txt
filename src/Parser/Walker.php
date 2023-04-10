@@ -78,7 +78,7 @@ final class Walker
                 function(Sequence $directives, object $directive): Sequence {
                     /**
                      * @var UserAgent|Allow|Disallow|CrawlDelay $directive
-                     * @var Sequence<Directives\Directives> $directives
+                     * @var Sequence<Directives> $directives
                      */
                     return $this->groupDirectives($directives, $directive);
                 },
@@ -153,10 +153,10 @@ final class Walker
     }
 
     /**
-     * @param Sequence<Directives\Directives> $directives
+     * @param Sequence<Directives> $directives
      * @param UserAgent|Allow|Disallow|CrawlDelay $directive
      *
-     * @return Sequence<Directives\Directives>
+     * @return Sequence<Directives>
      */
     private function groupDirectives(Sequence $directives, object $directive): Sequence
     {
@@ -165,7 +165,7 @@ final class Walker
             $directive = $directive;
 
             return ($directives)(
-                new Directives\Directives(
+                new Directives(
                     $directive,
                     Set::of(),
                     Set::of(),
