@@ -69,6 +69,7 @@ final class Walker
             })
             ->aggregate(static function(UserAgent|Allow|Disallow|CrawlDelay $a, $b) {
                 if ($a instanceof UserAgent && $b instanceof UserAgent) {
+                    /** @var Sequence<Allow|CrawlDelay|Disallow|UserAgent> */
                     return Sequence::of($a->merge($b));
                 }
 
