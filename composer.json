@@ -25,7 +25,7 @@
     "require": {
         "php": "~8.1",
         "innmind/url": "~4.1",
-        "innmind/immutable": "~4.13",
+        "innmind/immutable": "~4.13|~5.0",
         "innmind/http-transport": "~6.5"
     },
     "require-dev": {
