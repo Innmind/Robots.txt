@@ -7,8 +7,8 @@ use Innmind\RobotsTxt\Parser\Walker;
 use Innmind\HttpTransport\Transport;
 use Innmind\Url\Url;
 use Innmind\Http\{
-    Message\Request\Request,
-    Message\Method,
+    Request,
+    Method,
     ProtocolVersion,
     Headers,
     Header,
@@ -37,7 +37,7 @@ final class Parser
     public function __invoke(Url $url): Maybe
     {
         return ($this->fulfill)(
-            new Request(
+            Request::of(
                 $url,
                 Method::get,
                 ProtocolVersion::v20,

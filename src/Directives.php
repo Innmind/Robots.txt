@@ -152,7 +152,7 @@ final class Directives
                     ),
             );
 
-        return Content\Lines::of($lines);
+        return Content::ofLines($lines);
     }
 
     private function allows(string $url): bool

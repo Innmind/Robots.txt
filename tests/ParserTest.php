@@ -15,10 +15,11 @@ use Innmind\HttpTransport\{
 };
 use Innmind\Filesystem\File\Content;
 use Innmind\Url\Url;
-use Innmind\Http\Message\{
+use Innmind\Http\{
     Request,
-    StatusCode,
     Response,
+    Response\StatusCode,
+    ProtocolVersion,
 };
 use Innmind\Immutable\Either;
 use PHPUnit\Framework\TestCase;
@@ -32,31 +33,25 @@ class ParserTest extends TestCase
             'InnmindCrawler',
         );
         $url = Url::of('http://example.com');
-        $response = $this->createMock(Response::class);
-        $response
-            ->expects($this->once())
-            ->method('statusCode')
-            ->willReturn(StatusCode::ok);
-        $response
-            ->expects($this->once())
-            ->method('body')
-            ->willReturn(
-                Content\Lines::ofContent(<<<TXT
-Sitemap : foo.xml
-Host : example.com
-Crawl-delay: 10
-User-agent : Foo
-User-agent : Bar
-Allow : /foo
-Disallow : /bar
+        $response = Response::of(
+            StatusCode::ok,
+            ProtocolVersion::v11,
+            null,
+            Content::ofString(<<<TXT
+            Sitemap : foo.xml
+            Host : example.com
+            Crawl-delay: 10
+            User-agent : Foo
+            User-agent : Bar
+            Allow : /foo
+            Disallow : /bar
 
-User-agent : *
-Disallow :
-Crawl-delay : 10
-Crawl-delay : 20
-TXT
-                ),
-            );
+            User-agent : *
+            Disallow :
+            Crawl-delay : 10
+            Crawl-delay : 20
+            TXT),
+        );
         $transport
             ->expects($this->once())
             ->method('__invoke')
@@ -71,8 +66,8 @@ TXT
                     ) &&
                     $request->body()->toString() === '';
             }))
-            ->willReturn(Either::right(new Success(
-                $this->createMock(Request::class),
+            ->willReturnCallback(static fn($request) => Either::right(new Success(
+                $request,
                 $response,
             )));
         $expected = 'User-agent: Foo'."\n";
@@ -101,19 +96,15 @@ TXT
             'InnmindCrawler',
         );
         $url = Url::of('http://example.com');
-        $response = $this->createMock(Response::class);
-        $response
-            ->expects($this->once())
-            ->method('statusCode')
-            ->willReturn(StatusCode::notFound);
-        $response
-            ->expects($this->never())
-            ->method('body');
+        $response = Response::of(
+            StatusCode::notFound,
+            ProtocolVersion::v11,
+        );
         $transport
             ->expects($this->once())
             ->method('__invoke')
-            ->willReturn(Either::left(new ClientError(
-                $this->createMock(Request::class),
+            ->willReturnCallback(static fn($request) => Either::left(new ClientError(
+                $request,
                 $response,
             )));
 
