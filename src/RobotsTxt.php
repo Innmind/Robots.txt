@@ -64,7 +64,7 @@ final class RobotsTxt
 
     public function asContent(): Content
     {
-        return Content\Lines::of(
+        return Content::ofLines(
             $this
                 ->directives
                 ->map(static fn($directive) => $directive->asContent())

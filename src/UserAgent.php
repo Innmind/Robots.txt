@@ -58,7 +58,7 @@ final class UserAgent
 
     public function asContent(): Content
     {
-        return Content\Lines::of(
+        return Content::ofLines(
             $this
                 ->agents
                 ->map(static fn($agent) => $agent->prepend('User-agent: '))
