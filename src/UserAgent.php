@@ -14,35 +14,36 @@ use Innmind\Immutable\{
  */
 final class UserAgent
 {
-    /** @var Sequence<Str> */
-    private Sequence $agents;
-
     /**
      * @param Sequence<Str> $agents
      */
-    private function __construct(Sequence $agents)
-    {
-        $this->agents = $agents;
+    private function __construct(
+        private Sequence $agents,
+    ) {
     }
 
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function of(string $agent): self
     {
         return new self(Sequence::of(Str::of($agent)));
     }
 
+    #[\NoDiscard]
     public function and(string $agent): self
     {
         return new self(($this->agents)(Str::of($agent)));
     }
 
+    #[\NoDiscard]
     public function merge(self $agents): self
     {
         return new self($this->agents->append($agents->agents));
     }
 
+    #[\NoDiscard]
     public function matches(string $userAgent): bool
     {
         $userAgent = Str::of($userAgent)->toLower();
@@ -56,6 +57,7 @@ final class UserAgent
             );
     }
 
+    #[\NoDiscard]
     public function asContent(): Content
     {
         return Content::ofLines(

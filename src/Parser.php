@@ -12,28 +12,23 @@ use Innmind\Http\{
     ProtocolVersion,
     Headers,
     Header,
-    Header\Value\Value,
+    Header\Value,
 };
 use Innmind\Immutable\Maybe;
 
 final class Parser
 {
-    private Transport $fulfill;
-    private Walker $walker;
-    private string $userAgent;
-
     private function __construct(
-        Transport $fulfill,
-        string $userAgent,
+        private Transport $fulfill,
+        private Walker $walker,
+        private string $userAgent,
     ) {
-        $this->fulfill = $fulfill;
-        $this->walker = Walker::of();
-        $this->userAgent = $userAgent;
     }
 
     /**
      * @return Maybe<RobotsTxt>
      */
+    #[\NoDiscard]
     public function __invoke(Url $url): Maybe
     {
         return ($this->fulfill)(
@@ -42,9 +37,9 @@ final class Parser
                 Method::get,
                 ProtocolVersion::v20,
                 Headers::of(
-                    new Header\Header(
+                    Header::of(
                         'User-Agent',
-                        new Value($this->userAgent),
+                        Value::of($this->userAgent),
                     ),
                 ),
             ),
@@ -57,6 +52,6 @@ final class Parser
 
     public static function of(Transport $fulfill, string $userAgent): self
     {
-        return new self($fulfill, $userAgent);
+        return new self($fulfill, Walker::of(), $userAgent);
     }
 }

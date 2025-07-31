@@ -13,7 +13,8 @@ use Innmind\RobotsTxt\{
 };
 use Innmind\Url\Url;
 use Innmind\Immutable\Sequence;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class DirectivesTest extends TestCase
 {
@@ -51,9 +52,7 @@ class DirectivesTest extends TestCase
         ));
     }
 
-    /**
-     * @dataProvider cases
-     */
+    #[DataProvider('cases')]
     public function testDisallows(bool $expected, string $url, string $allow, string $disallow)
     {
         $directives = Directives::of(
@@ -154,7 +153,7 @@ class DirectivesTest extends TestCase
     /**
      * @see https://developers.google.com/webmasters/control-crawl-index/docs/robots_txt#order-of-precedence-for-group-member-records
      */
-    public function cases(): array
+    public static function cases(): array
     {
         return [
             [false, 'http://example.com/page', '/p', '/'],

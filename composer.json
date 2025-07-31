@@ -24,13 +24,11 @@
     },
     "require": {
         "php": "~8.2",
-        "innmind/url": "~4.1",
-        "innmind/immutable": "~4.13|~5.0",
-        "innmind/http-transport": "~7.0"
+        "innmind/foundation": "~1.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "~9.0",
-        "vimeo/psalm": "~5.15",
+        "innmind/black-box": "^6.4.1",
+        "innmind/static-analysis": "^1.2.1",
         "innmind/coding-standard": "~2.0"
     }
 }

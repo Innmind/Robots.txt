@@ -14,21 +14,21 @@ use Innmind\Immutable\{
  */
 final class UrlPattern
 {
-    private string $pattern;
-
-    private function __construct(string $pattern)
-    {
-        $this->pattern = $pattern;
+    private function __construct(
+        private string $pattern,
+    ) {
     }
 
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function of(string $pattern): self
     {
         return new self($pattern);
     }
 
+    #[\NoDiscard]
     public function matches(string $url): bool
     {
         if ($this->pattern === '*' || Str::of($this->pattern)->empty()) {
@@ -48,6 +48,7 @@ final class UrlPattern
         return $this->fallUnder($url);
     }
 
+    #[\NoDiscard]
     public function toString(): string
     {
         return $this->pattern;

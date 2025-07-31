@@ -16,7 +16,6 @@ use Innmind\Immutable\{
     Str,
     Sequence,
     Pair,
-    Map,
     Predicate\Instance,
 };
 
@@ -34,6 +33,7 @@ final class Walker
      *
      * @return Sequence<Directives>
      */
+    #[\NoDiscard]
     public function __invoke(Sequence $lines): Sequence
     {
         return $lines

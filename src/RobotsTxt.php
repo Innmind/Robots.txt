@@ -15,17 +15,13 @@ use Innmind\Immutable\{
  */
 final class RobotsTxt
 {
-    private Url $url;
-    /** @var Sequence<Directives> */
-    private Sequence $directives;
-
     /**
      * @param Sequence<Directives> $directives
      */
-    private function __construct(Url $url, Sequence $directives)
-    {
-        $this->url = $url;
-        $this->directives = $directives;
+    private function __construct(
+        private Url $url,
+        private Sequence $directives,
+    ) {
     }
 
     /**
@@ -33,21 +29,25 @@ final class RobotsTxt
      *
      * @param Sequence<Directives> $directives
      */
+    #[\NoDiscard]
     public static function of(Url $url, Sequence $directives): self
     {
         return new self($url, $directives);
     }
 
+    #[\NoDiscard]
     public function url(): Url
     {
         return $this->url;
     }
 
+    #[\NoDiscard]
     public function directives(): Sequence
     {
         return $this->directives;
     }
 
+    #[\NoDiscard]
     public function disallows(string $userAgent, Url $url): bool
     {
         return $this
@@ -62,6 +62,7 @@ final class RobotsTxt
             );
     }
 
+    #[\NoDiscard]
     public function asContent(): Content
     {
         return Content::ofLines(

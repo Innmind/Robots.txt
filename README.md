@@ -32,4 +32,5 @@ $robots->disallows('My user agent', Url::of('/humans.txt')); //false
 $robots->disallows('My user agent', Url::of('/any/other/url')); //true
 ```
 
-**Note**: Here only the path `/humans.txt` is allowed because by default github disallows any user agent to crawl there website except for this file.
+> [!NOTE]
+> Here only the path `/humans.txt` is allowed because by default github disallows any user agent to crawl there website except for this file.
