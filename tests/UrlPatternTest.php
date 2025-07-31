@@ -4,7 +4,8 @@ declare(strict_types = 1);
 namespace Tests\Innmind\RobotsTxt;
 
 use Innmind\RobotsTxt\UrlPattern;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UrlPatternTest extends TestCase
 {
@@ -16,9 +17,7 @@ class UrlPatternTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider cases
-     */
+    #[DataProvider('cases')]
     public function testMatches(bool $expected, string $pattern, string $url)
     {
         $this->assertSame(
@@ -30,7 +29,7 @@ class UrlPatternTest extends TestCase
     /**
      * @see https://developers.google.com/webmasters/control-crawl-index/docs/robots_txt#example-path-matches
      */
-    public function cases(): array
+    public static function cases(): array
     {
         return [
             [true, '', '/'],

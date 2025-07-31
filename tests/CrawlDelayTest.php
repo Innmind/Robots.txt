@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Tests\Innmind\RobotsTxt;
 
 use Innmind\RobotsTxt\CrawlDelay;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class CrawlDelayTest extends TestCase
 {
