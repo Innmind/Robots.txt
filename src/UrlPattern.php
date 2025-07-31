@@ -24,11 +24,13 @@ final class UrlPattern
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function of(string $pattern): self
     {
         return new self($pattern);
     }
 
+    #[\NoDiscard]
     public function matches(string $url): bool
     {
         if ($this->pattern === '*' || Str::of($this->pattern)->empty()) {
@@ -48,6 +50,7 @@ final class UrlPattern
         return $this->fallUnder($url);
     }
 
+    #[\NoDiscard]
     public function toString(): string
     {
         return $this->pattern;

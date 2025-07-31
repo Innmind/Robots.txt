@@ -26,6 +26,7 @@ final class CrawlDelay
      *
      * @param 0|positive-int $value
      */
+    #[\NoDiscard]
     public static function of(int $value): self
     {
         return new self($value);
@@ -36,6 +37,7 @@ final class CrawlDelay
      *
      * @return Maybe<self>
      */
+    #[\NoDiscard]
     public static function maybe(string $value): Maybe
     {
         /** @psalm-suppress ArgumentTypeCoercion It doesn't understand the last filter */
@@ -49,11 +51,13 @@ final class CrawlDelay
     /**
      * @return 0|positive-int
      */
+    #[\NoDiscard]
     public function toInt(): int
     {
         return $this->value;
     }
 
+    #[\NoDiscard]
     public function toString(): string
     {
         return 'Crawl-delay: '.$this->value;

@@ -34,6 +34,7 @@ final class Parser
     /**
      * @return Maybe<RobotsTxt>
      */
+    #[\NoDiscard]
     public function __invoke(Url $url): Maybe
     {
         return ($this->fulfill)(
