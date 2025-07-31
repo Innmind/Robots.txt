@@ -21,17 +21,12 @@ use Innmind\Http\{
     ProtocolVersion,
 };
 use Innmind\Immutable\Either;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
     public function testExecution()
     {
-        $parse = Parser::of(
-            $transport = $this->createMock(Transport::class),
-            'InnmindCrawler',
-        );
-        $url = Url::of('http://example.com');
         $response = Response::of(
             StatusCode::ok,
             ProtocolVersion::v11,
@@ -51,24 +46,39 @@ class ParserTest extends TestCase
             Crawl-delay : 20
             TXT),
         );
-        $transport
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($this->callback(static function(Request $request) use ($url): bool {
-                return $request->url() === $url &&
-                    $request->method()->toString() === 'GET' &&
-                    $request->protocolVersion()->toString() === '2.0' &&
-                    $request->headers()->count() === 1 &&
-                    'User-Agent: InnmindCrawler' === $request->headers()->get('user-agent')->match(
-                        static fn($header) => $header->toString(),
-                        static fn() => null,
-                    ) &&
-                    $request->body()->toString() === '';
-            }))
-            ->willReturnCallback(static fn($request) => Either::right(new Success(
-                $request,
-                $response,
-            )));
+        $url = Url::of('http://example.com');
+        $parse = Parser::of(
+            new class($url, $response, $this) implements Transport {
+                public function __construct(
+                    private $url,
+                    private $response,
+                    private $test,
+                ) {
+                }
+
+                public function __invoke(Request $request): Either
+                {
+                    $this->test->assertSame($this->url, $request->url());
+                    $this->test->assertSame('GET', $request->method()->toString());
+                    $this->test->assertSame('2.0', $request->protocolVersion()->toString());
+                    $this->test->assertCount(1, $request->headers());
+                    $this->test->assertSame(
+                        'User-Agent: InnmindCrawler',
+                        $request->headers()->get('user-agent')->match(
+                            static fn($header) => $header->toString(),
+                            static fn() => null,
+                        ),
+                    );
+                    $this->test->assertSame('', $request->body()->toString());
+
+                    return Either::right(new Success(
+                        $request,
+                        $this->response,
+                    ));
+                }
+            },
+            'InnmindCrawler',
+        );
         $expected = 'User-agent: Foo'."\n";
         $expected .= 'User-agent: Bar'."\n";
         $expected .= 'Allow: /foo'."\n";
@@ -90,22 +100,29 @@ class ParserTest extends TestCase
 
     public function testThrowWhenRequestNotFulfilled()
     {
-        $parse = Parser::of(
-            $transport = $this->createMock(Transport::class),
-            'InnmindCrawler',
-        );
         $url = Url::of('http://example.com');
         $response = Response::of(
             StatusCode::notFound,
             ProtocolVersion::v11,
         );
-        $transport
-            ->expects($this->once())
-            ->method('__invoke')
-            ->willReturnCallback(static fn($request) => Either::left(new ClientError(
-                $request,
-                $response,
-            )));
+        $parse = Parser::of(
+            new class($url, $response) implements Transport {
+                public function __construct(
+                    private $url,
+                    private $response,
+                ) {
+                }
+
+                public function __invoke(Request $request): Either
+                {
+                    return Either::left(new ClientError(
+                        $request,
+                        $this->response,
+                    ));
+                }
+            },
+            'InnmindCrawler',
+        );
 
         $this->assertNull($parse($url)->match(
             static fn($robots) => $robots,

@@ -4,13 +4,12 @@ declare(strict_types = 1);
 namespace Tests\Innmind\RobotsTxt;
 
 use Innmind\RobotsTxt\UserAgent;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UserAgentTest extends TestCase
 {
-    /**
-     * @dataProvider cases
-     */
+    #[DataProvider('cases')]
     public function testMatches(string $pattern, string $userAgent, bool $expected)
     {
         $this->assertSame(
@@ -40,7 +39,7 @@ class UserAgentTest extends TestCase
         );
     }
 
-    public function cases(): array
+    public static function cases(): array
     {
         return [
             ['*', 'GoogleBot', true],

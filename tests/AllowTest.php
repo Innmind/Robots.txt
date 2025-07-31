@@ -7,7 +7,7 @@ use Innmind\RobotsTxt\{
     Allow,
     UrlPattern,
 };
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class AllowTest extends TestCase
 {
