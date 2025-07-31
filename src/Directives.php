@@ -49,9 +49,9 @@ final class Directives
      */
     public static function of(
         UserAgent $userAgent,
-        Sequence $allow = null,
-        Sequence $disallow = null,
-        CrawlDelay $crawlDelay = null,
+        ?Sequence $allow = null,
+        ?Sequence $disallow = null,
+        ?CrawlDelay $crawlDelay = null,
     ): self {
         return new self(
             $userAgent,
