@@ -18,16 +18,19 @@ final class Allow
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function of(UrlPattern $pattern): self
     {
         return new self($pattern);
     }
 
+    #[\NoDiscard]
     public function matches(string $url): bool
     {
         return $this->pattern->matches($url);
     }
 
+    #[\NoDiscard]
     public function toString(): string
     {
         return 'Allow: '.$this->pattern->toString();

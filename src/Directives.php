@@ -47,6 +47,7 @@ final class Directives
      * @param Sequence<Allow> $allow
      * @param Sequence<Disallow> $disallow
      */
+    #[\NoDiscard]
     public static function of(
         UserAgent $userAgent,
         ?Sequence $allow = null,
@@ -61,6 +62,7 @@ final class Directives
         );
     }
 
+    #[\NoDiscard]
     public function withAllow(Allow $allow): self
     {
         return new self(
@@ -71,6 +73,7 @@ final class Directives
         );
     }
 
+    #[\NoDiscard]
     public function withDisallow(Disallow $disallow): self
     {
         return new self(
@@ -81,6 +84,7 @@ final class Directives
         );
     }
 
+    #[\NoDiscard]
     public function withCrawlDelay(CrawlDelay $crawlDelay): self
     {
         return self::of(
@@ -91,11 +95,13 @@ final class Directives
         );
     }
 
+    #[\NoDiscard]
     public function targets(string $userAgent): bool
     {
         return $this->userAgent->matches($userAgent);
     }
 
+    #[\NoDiscard]
     public function disallows(Url $url): bool
     {
         $url = $this->clean($url)->toString();
@@ -115,11 +121,13 @@ final class Directives
     /**
      * @return Maybe<CrawlDelay>
      */
+    #[\NoDiscard]
     public function crawlDelay(): Maybe
     {
         return $this->crawlDelay;
     }
 
+    #[\NoDiscard]
     public function asContent(): Content
     {
         $lines = $this
