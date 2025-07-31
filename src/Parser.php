@@ -12,7 +12,7 @@ use Innmind\Http\{
     ProtocolVersion,
     Headers,
     Header,
-    Header\Value\Value,
+    Header\Value,
 };
 use Innmind\Immutable\Maybe;
 
@@ -42,9 +42,9 @@ final class Parser
                 Method::get,
                 ProtocolVersion::v20,
                 Headers::of(
-                    new Header\Header(
+                    Header::of(
                         'User-Agent',
-                        new Value($this->userAgent),
+                        Value::of($this->userAgent),
                     ),
                 ),
             ),
