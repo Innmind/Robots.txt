@@ -14,11 +14,9 @@ use Innmind\Immutable\{
  */
 final class UrlPattern
 {
-    private string $pattern;
-
-    private function __construct(string $pattern)
-    {
-        $this->pattern = $pattern;
+    private function __construct(
+        private string $pattern,
+    ) {
     }
 
     /**

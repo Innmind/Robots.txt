@@ -10,15 +10,12 @@ use Innmind\Immutable\Maybe;
  */
 final class CrawlDelay
 {
-    /** @var 0|positive-int */
-    private int $value;
-
     /**
      * @param 0|positive-int $value
      */
-    private function __construct(int $value)
-    {
-        $this->value = $value;
+    private function __construct(
+        private int $value,
+    ) {
     }
 
     /**

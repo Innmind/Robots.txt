@@ -16,29 +16,17 @@ use Innmind\Immutable\{
  */
 final class Directives
 {
-    private UserAgent $userAgent;
-    /** @var Sequence<Allow> */
-    private Sequence $allow;
-    /** @var Sequence<Disallow> */
-    private Sequence $disallow;
-    /** @var Maybe<CrawlDelay> */
-    private Maybe $crawlDelay;
-
     /**
      * @param Sequence<Allow> $allow
      * @param Sequence<Disallow> $disallow
      * @param Maybe<CrawlDelay> $crawlDelay
      */
     private function __construct(
-        UserAgent $userAgent,
-        Sequence $allow,
-        Sequence $disallow,
-        Maybe $crawlDelay,
+        private UserAgent $userAgent,
+        private Sequence $allow,
+        private Sequence $disallow,
+        private Maybe $crawlDelay,
     ) {
-        $this->userAgent = $userAgent;
-        $this->allow = $allow;
-        $this->disallow = $disallow;
-        $this->crawlDelay = $crawlDelay;
     }
 
     /**
