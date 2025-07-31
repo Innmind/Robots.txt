@@ -16,7 +16,6 @@ use Innmind\Immutable\{
     Str,
     Sequence,
     Pair,
-    Map,
     Predicate\Instance,
 };
 

@@ -5,13 +5,11 @@ namespace Tests\Innmind\RobotsTxt\Parser;
 
 use Innmind\RobotsTxt\{
     Parser\Walker,
-    Directives,
 };
 use Innmind\Filesystem\File\Content\Line;
 use Innmind\Immutable\{
     Str,
     Sequence,
-    Set,
 };
 use PHPUnit\Framework\TestCase;
 

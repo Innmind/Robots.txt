@@ -5,7 +5,6 @@ namespace Tests\Innmind\RobotsTxt;
 
 use Innmind\RobotsTxt\{
     Parser,
-    Parser\Walker,
     RobotsTxt,
 };
 use Innmind\HttpTransport\{

@@ -3,10 +3,7 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\RobotsTxt;
 
-use Innmind\RobotsTxt\{
-    UserAgent,
-    Exception\DomainException,
-};
+use Innmind\RobotsTxt\UserAgent;
 use PHPUnit\Framework\TestCase;
 
 class UserAgentTest extends TestCase
