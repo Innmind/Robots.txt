@@ -10,11 +10,9 @@ use Innmind\Immutable\Str;
  */
 final class Disallow
 {
-    private UrlPattern $pattern;
-
-    private function __construct(UrlPattern $pattern)
-    {
-        $this->pattern = $pattern;
+    private function __construct(
+        private UrlPattern $pattern,
+    ) {
     }
 
     /**

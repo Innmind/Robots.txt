@@ -18,17 +18,11 @@ use Innmind\Immutable\Maybe;
 
 final class Parser
 {
-    private Transport $fulfill;
-    private Walker $walker;
-    private string $userAgent;
-
     private function __construct(
-        Transport $fulfill,
-        string $userAgent,
+        private Transport $fulfill,
+        private Walker $walker,
+        private string $userAgent,
     ) {
-        $this->fulfill = $fulfill;
-        $this->walker = Walker::of();
-        $this->userAgent = $userAgent;
     }
 
     /**
@@ -58,6 +52,6 @@ final class Parser
 
     public static function of(Transport $fulfill, string $userAgent): self
     {
-        return new self($fulfill, $userAgent);
+        return new self($fulfill, Walker::of(), $userAgent);
     }
 }

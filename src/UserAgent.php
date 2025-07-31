@@ -14,15 +14,12 @@ use Innmind\Immutable\{
  */
 final class UserAgent
 {
-    /** @var Sequence<Str> */
-    private Sequence $agents;
-
     /**
      * @param Sequence<Str> $agents
      */
-    private function __construct(Sequence $agents)
-    {
-        $this->agents = $agents;
+    private function __construct(
+        private Sequence $agents,
+    ) {
     }
 
     /**

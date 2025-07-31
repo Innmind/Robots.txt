@@ -10,21 +10,18 @@ use Innmind\Immutable\Maybe;
  */
 final class CrawlDelay
 {
-    /** @var 0|positive-int */
-    private int $value;
-
     /**
-     * @param 0|positive-int $value
+     * @param int<0, max> $value
      */
-    private function __construct(int $value)
-    {
-        $this->value = $value;
+    private function __construct(
+        private int $value,
+    ) {
     }
 
     /**
      * @psalm-pure
      *
-     * @param 0|positive-int $value
+     * @param int<0, max> $value
      */
     #[\NoDiscard]
     public static function of(int $value): self
@@ -49,7 +46,7 @@ final class CrawlDelay
     }
 
     /**
-     * @return 0|positive-int
+     * @return int<0, max>
      */
     #[\NoDiscard]
     public function toInt(): int
