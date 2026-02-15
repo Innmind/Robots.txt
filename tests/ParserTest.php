@@ -48,35 +48,27 @@ class ParserTest extends TestCase
         );
         $url = Url::of('http://example.com');
         $parse = Parser::of(
-            new class($url, $response, $this) implements Transport {
-                public function __construct(
-                    private $url,
-                    private $response,
-                    private $test,
-                ) {
-                }
-
-                public function __invoke(Request $request): Either
-                {
-                    $this->test->assertSame($this->url, $request->url());
-                    $this->test->assertSame('GET', $request->method()->toString());
-                    $this->test->assertSame('2.0', $request->protocolVersion()->toString());
-                    $this->test->assertCount(1, $request->headers());
-                    $this->test->assertSame(
+            Transport::via(
+                function(Request $request) use ($url, $response): Either {
+                    $this->assertSame($url, $request->url());
+                    $this->assertSame('GET', $request->method()->toString());
+                    $this->assertSame('2.0', $request->protocolVersion()->toString());
+                    $this->assertCount(1, $request->headers());
+                    $this->assertSame(
                         'User-Agent: InnmindCrawler',
                         $request->headers()->get('user-agent')->match(
                             static fn($header) => $header->toString(),
                             static fn() => null,
                         ),
                     );
-                    $this->test->assertSame('', $request->body()->toString());
+                    $this->assertSame('', $request->body()->toString());
 
                     return Either::right(new Success(
                         $request,
-                        $this->response,
+                        $response,
                     ));
-                }
-            },
+                },
+            ),
             'InnmindCrawler',
         );
         $expected = 'User-agent: Foo'."\n";
@@ -106,21 +98,12 @@ class ParserTest extends TestCase
             ProtocolVersion::v11,
         );
         $parse = Parser::of(
-            new class($url, $response) implements Transport {
-                public function __construct(
-                    private $url,
-                    private $response,
-                ) {
-                }
-
-                public function __invoke(Request $request): Either
-                {
-                    return Either::left(new ClientError(
-                        $request,
-                        $this->response,
-                    ));
-                }
-            },
+            Transport::via(
+                static fn(Request $request) => Either::left(new ClientError(
+                    $request,
+                    $response,
+                )),
+            ),
             'InnmindCrawler',
         );
 
