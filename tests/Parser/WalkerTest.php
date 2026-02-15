@@ -3,9 +3,7 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\RobotsTxt\Parser;
 
-use Innmind\RobotsTxt\{
-    Parser\Walker,
-};
+use Innmind\RobotsTxt\Parser\Walker;
 use Innmind\Filesystem\File\Content\Line;
 use Innmind\Immutable\{
     Str,
@@ -44,7 +42,7 @@ TXT;
         $stream = Walker::of()(Str::of($robots)->split("\n")->map(Line::of(...)));
 
         $this->assertInstanceOf(Sequence::class, $stream);
-        $this->assertCount(2, $stream);
+        $this->assertSame(2, $stream->size());
         $this->assertSame(
             $firstDirectives,
             $stream->first()->match(
